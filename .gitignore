@@ -1,0 +1,7 @@
+build/
+.vscode/
+*.dll
+*.exe
+*.d
+*.o
+leykin

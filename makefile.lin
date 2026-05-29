@@ -1,0 +1,41 @@
+# === Compiler and Flags ===
+CXX := g++
+
+CXXFLAGS := -std=c++20 -g -Wall -Wextra -Werror -pedantic -pedantic-errors -O2 -MMD -MP -Iinclude
+
+# === Allegro via pkg-config ===
+PKG := allegro-5 allegro_image-5 allegro_color-5 allegro_font-5 allegro_ttf-5 \
+       allegro_audio-5 allegro_acodec-5 allegro_dialog-5 allegro_primitives-5 \
+       allegro_physfs-5 physfs
+#PKG_CFLAGS := $(shell pkg-config --cflags $(PKG))
+PKG_LIBS := $(shell pkg-config --libs $(PKG))
+
+# === Directories ===
+SRC_DIR := src
+OBJ_DIR := build
+BIN := tins
+
+# === Source Files ===
+CPP_SRCS := $(wildcard $(SRC_DIR)/*.cpp)
+
+CPP_OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(CPP_SRCS))
+OBJS := $(CPP_OBJS) 
+DEPS := $(OBJS:.o=.d)
+
+# === Build Target ===
+all: $(BIN)
+
+$(BIN): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(PKG_CFLAGS) $^ -o $@ $(PKG_LIBS)
+
+# === C++ Object Rule ===
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) $(PKG_CFLAGS) -c $< -o $@
+
+# === Include auto-generated dependency files ===
+-include $(DEPS)
+
+# === Clean Up ===
+clean:
+	rm -rf $(OBJ_DIR) $(BIN)

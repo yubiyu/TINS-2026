@@ -1,0 +1,48 @@
+# === Compiler ===
+CXX := g++
+
+# === Project directories ===
+SRC_DIR := src
+OBJ_DIR := build
+BIN     := tins.exe
+
+# === Compiler flags ===
+CXXFLAGS := -std=c++20 -g -Wall -Wextra -Werror -pedantic -MMD -MP -Iinclude
+ALLEGRO_PATH := C:/Development/Libraries/allegro
+CXXFLAGS += -I"$(ALLEGRO_PATH)/include"
+
+# === Allegro dynamic linking ===
+ALLEGRO_LIB  := -L"$(ALLEGRO_PATH)/lib"
+ALLEGRO_LIBS := -lallegro -lallegro_image -lallegro_color -lallegro_font -lallegro_ttf \
+       -lallegro_audio -lallegro_acodec -lallegro_primitives \
+       -lallegro_physfs 
+#-lphysfs
+
+# === Linker flags ===
+LDFLAGS := $(ALLEGRO_LIB) $(ALLEGRO_LIBS)
+
+# === Source files ===
+CPP_SRCS := $(wildcard $(SRC_DIR)/*.cpp)
+CPP_OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(CPP_SRCS))
+DEPS     := $(CPP_OBJS:.o=.d)
+
+# === Build target ===
+all: $(BIN)
+
+$(BIN): $(CPP_OBJS)
+	$(CXX) $^ -o $@ $(LDFLAGS)
+
+# === C++ object files ===
+$(OBJ_DIR):
+	@if not exist "$(OBJ_DIR)" mkdir "$(OBJ_DIR)"
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# === Include dependency files ===
+-include $(DEPS)
+
+# === Clean ===
+clean:
+	if exist "$(OBJ_DIR)" rmdir /s /q "$(OBJ_DIR)"
+	if exist "$(BIN)" del "$(BIN)"
