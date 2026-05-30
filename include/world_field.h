@@ -10,6 +10,17 @@
 
 struct Field
 {
+    float contamination {};
+    float contaminationDoT {};
+
+    float contaminationPerLeak {}; 
+    float contaminationDoTPerLeak {};
+
+    float contaminationPerMisplay {};
+
+    float contaminationCleanupRate {};
+    float contaminationDoTAttenuation {};
+
     int gridWidth{}, gridHeight{};
     int gridXPosition{}, gridYPosition{};
 
@@ -20,7 +31,8 @@ struct Field
     int polarityButtonXPosition{}, polarityButtonYPosition {};
     int polarityButtonFrameXPosition{}, polarityButtonFrameYPosition{};
 
-    int tachyonBarWidth {}, tachyonBarHeight {};
+    int tachyonBarMaxWidth {}, tachyonBarHeight {};
+    float tachyonBarCurrentWidth {};
     int tachyonBarXPosition{}, tachyonBarYPosition{};
 
     std::string titleString{};
@@ -66,4 +78,6 @@ struct Field
     void ResetSpawnCD();
     void ProgressSpawnCD();
     int SimultaneousSpawnRNG();
+
+    void UpdateContaminationBar();
 };

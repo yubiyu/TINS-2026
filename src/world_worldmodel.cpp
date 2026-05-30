@@ -32,6 +32,23 @@ void WorldModel::Reset()
 
 void WorldModel::Update()
 {
+    Field::field.contamination += Field::field.contaminationDoT;
+
+    if(Field::field.contaminationDoT > 0.0)
+       Field::field.contaminationDoT -= Field::field.contaminationDoTAttenuation;
+    if(Field::field.contaminationDoT < 0.0)
+        Field::field.contaminationDoT = 0.0;
+
+
+    if(Field::field.contamination > 0.0)
+        Field::field.contamination -= Field::field.contaminationCleanupRate;
+    if(Field::field.contamination < 0)
+        Field::field.contamination = 0.0;
+
+    
+    Field::field.UpdateContaminationBar();
+
+
     if (Field::field.attackCD_current > 0)
         Field::field.attackCD_current--;
 
@@ -168,4 +185,9 @@ void WorldModel::CompleteAttackCell(size_t cell_index)
         {
         }
     }
+    else
+    {
+        Field::field.contamination += Field::field.contaminationPerMisplay;
+    }
+
 }

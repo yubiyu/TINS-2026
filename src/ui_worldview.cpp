@@ -101,7 +101,13 @@ void WorldView::DrawGrid()
     al_draw_bitmap(Image::polarityButtonPng, Field::field.polarityButtonXPosition, Field::field.polarityButtonYPosition, 0);
     al_draw_bitmap(Image::polarityButtonFramePng, Field::field.polarityButtonFrameXPosition, Field::field.polarityButtonFrameYPosition, 0);
     
-    al_draw_bitmap(Image::tachyonBarPng, Field::field.tachyonBarXPosition, Field::field.tachyonBarYPosition, 0);
+    al_draw_bitmap_region(Image::tachyonBarPng,
+        0, 0,
+        Field::field.tachyonBarCurrentWidth, Field::field.tachyonBarHeight,
+        Field::field.tachyonBarXPosition, Field::field.tachyonBarYPosition,
+        0);
+
+
     al_draw_bitmap(Image::tachyonBarFramePng, Field::field.tachyonBarXPosition, Field::field.tachyonBarYPosition, 0);
 }
 void WorldView::DrawCounters()

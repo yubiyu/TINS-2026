@@ -24,7 +24,6 @@ void Field::Initialize()
     gridFrameXPosition = gridXPosition - 4;
     gridFrameYPosition = gridYPosition - 4;
 
-
     polarityButtonWidth = 64;
     polarityButtonXPosition = gridXPosition;
     polarityButtonYPosition = gridYPosition + gridHeight;
@@ -34,6 +33,8 @@ void Field::Initialize()
     tachyonBarXPosition = polarityButtonXPosition + polarityButtonWidth;
     tachyonBarYPosition = polarityButtonYPosition;
 
+    tachyonBarMaxWidth = 320;
+    tachyonBarHeight = 64;
     titleStringXPosition = Display::width/2;
     titleStringYPosition = gridFrameYPosition/2 - Text::FIELD_TITLE_FONT_HEIGHT/2;
 
@@ -54,6 +55,19 @@ void Field::Initialize()
 void Field::Reset()
 {
     titleString = "mimic_suppression_field";
+
+    contamination = 0.0;
+    contaminationDoT = 0.2;
+
+    contaminationPerLeak = 10.0;
+    contaminationDoTPerLeak = 0.1;
+
+    contaminationPerMisplay = 5.0;
+    
+    contaminationCleanupRate = 1.0 / Timer::FPS;
+    contaminationDoTAttenuation = contaminationDoTPerLeak / (Timer::FPS*2); 
+
+    UpdateContaminationBar();
 
     attackNumTicks = Timer::FPS * 0.25;
     attackCD_Required = Timer::FPS * 0.25;
@@ -94,4 +108,9 @@ int Field::SimultaneousSpawnRNG()
         mimicsToSpawn = 3;
     
     return mimicsToSpawn;
+}
+
+void Field::UpdateContaminationBar()
+{
+    tachyonBarCurrentWidth = tachyonBarMaxWidth * (contamination / 100.0);
 }
