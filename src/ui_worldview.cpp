@@ -7,7 +7,9 @@
 #include "input_mouse.h"
 #include "input_keyboard.h"
 
+#include "resource_image.h"
 #include "resource_palette.h"
+#include "resource_text.h"
 
 #include "world_worldmodel.h"
 
@@ -40,43 +42,68 @@ void WorldView::Reset()
 
 void WorldView::InputMouse()
 {
-    //if (!CheckMouseInUI())
-        //return;
-
-    /*
-    if (Mouse::currentZPosition > Mouse::previousZPosition)
-        Camera::worldCamera.ZoomIn();
-    else if (Mouse::currentZPosition < Mouse::previousZPosition)
-        Camera::worldCamera.ZoomOut();
-    */
-
 }
 void WorldView::InputKeyboard()
 {
+    if (Keyboard::Pressed(ALLEGRO_KEY_ESCAPE))
+        UIState::exit = true;
+
+    if (Keyboard::Pressed(ALLEGRO_KEY_PAD_5))
+    {
+    }
 }
 void WorldView::Update()
 {
     // Todo: Add conditions for free camera movement as well as centering the camera on other things.
-    //CenterCameraOnPC();
+    // CenterCameraOnPC();
 
     UpdateBuffer();
 }
 void WorldView::UpdateBuffer()
 {
-    // Note: The bufferNeedsUpdate checks common to all other UIs are skipped for WorldView since it needs to be true practically every update tick.
-
     ALLEGRO_BITMAP *previousBitmap = al_get_target_bitmap();
     al_set_target_bitmap(buffer);
     al_clear_to_color(Palette::transparent);
 
-    //al_use_transform(&Camera::worldCamera.transform);
-
-
+    DrawTitle();
+    DrawGrid();
+    DrawCounters();
 
     if (drawDebugPrimitives)
         DrawingUtil::al_draw_inbounds_rectangle(0, 0, width, height, Palette::debugBlue, 1.0);
 
-    //al_use_transform(&Camera::worldCamera.identityTransform);
-
     al_set_target_bitmap(previousBitmap);
+}
+void WorldView::DrawTitle()
+{
+    TextUtil::al_draw_string(Text::fieldTitleFont, Palette::colours[Palette::COL_LIGHT],
+                             Field::field.titleStringXPosition, Field::field.titleStringYPosition,
+                             ALLEGRO_ALIGN_CENTRE, Field::field.titleString);
+}
+void WorldView::DrawGrid()
+{
+    al_draw_bitmap(Image::gridFramePng, Field::field.frameXPosition, Field::field.frameYPosition, 0);
+    al_draw_bitmap(Image::gridPng, Field::field.gridXPosition, Field::field.gridYPosition, 0);
+}
+void WorldView::DrawCounters()
+{
+    size_t mimicIndex = 0;
+
+    // Drawing order: left column first, then right.
+    for(size_t drawCol = 0; drawCol < 2; drawCol++)
+    {
+        for(size_t drawRow = 0; drawRow < 3; drawRow++)
+        {
+            int spriteDrawX = 64 + 704*drawCol;
+            int spriteDrawY = 128 + (128*drawRow);
+            int textDrawX = spriteDrawX + 64 + 32;
+            int textDrawY = spriteDrawY + Text::FIELD_COUNTER_FONT_HEIGHT/2;
+            std::string captureCountString = std::to_string(Field::field.mimicsCaptured[mimicIndex]);
+
+            al_draw_bitmap(Image::mimicAtlas_mimics[mimicIndex], spriteDrawX, spriteDrawY, 0);
+            TextUtil::al_draw_string(Text::fieldCounterFont, Palette::textDefault,
+                textDrawX, textDrawY,
+                ALLEGRO_ALIGN_LEFT, captureCountString);
+        }
+    }
 }

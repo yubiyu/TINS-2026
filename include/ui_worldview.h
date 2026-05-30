@@ -26,4 +26,8 @@ public:
 
     void Update() override;
     void UpdateBuffer() override;
+
+    void DrawGrid();
+    void DrawTitle();
+    void DrawCounters();
 };

@@ -19,6 +19,13 @@ Settings
 /*
 WorldView
 */
+    static ALLEGRO_BITMAP *gridFramePng;
+    static ALLEGRO_BITMAP *gridPng;
+    
+    static ALLEGRO_BITMAP *mimicAtlasPng;
+    static std::vector<ALLEGRO_BITMAP*> mimicAtlas_mimics;
+
+    static ALLEGRO_BITMAP *captureAtlasPng;
 
     static void Initialize();
     static void Uninitialize();

@@ -17,7 +17,7 @@
 #include "resource_palette.h"
 #include "resource_configuration.h"
 
-#include "data_sprite.h"
+#include "data_mimic.h"
 
 #include "world_worldmodel.h"
 
@@ -95,7 +95,7 @@ bool Core::Initialize(char **argv)
 
     UIData::Install();
 
-    SpriteData::Install();
+    MimicData::Install();
 
     Filesystem::SetPhysfsFileInterface(); // Image, text, and audio resources are stored in data.zip. To be accessed by PHYSfs.
     Palette::Initialize();

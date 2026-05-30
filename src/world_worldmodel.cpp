@@ -11,6 +11,8 @@ WorldModel WorldModel::world;
 
 void WorldModel::Initialize()
 {
+    Field::field.Initialize();
+
 }
 
 void WorldModel::Uninitialize()

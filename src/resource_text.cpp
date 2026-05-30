@@ -7,6 +7,9 @@
 ALLEGRO_FONT *Text::defaultFontHalfSize;
 ALLEGRO_FONT *Text::defaultFont;
 
+ALLEGRO_FONT *Text::fieldTitleFont;
+ALLEGRO_FONT *Text::fieldCounterFont;
+
 void Text::Initialize()
 {
     al_init_font_addon();
@@ -25,9 +28,12 @@ void Text::LoadResources()
 {
     std::cout << "Text: Loading resources." << std::endl;
 
-    // My favourite so far. Could have wider characters.
-    defaultFontHalfSize = al_load_ttf_font("LabMono-Regular.otf", DEFAULT_FONT_HEIGHT / 2, 0);
-    defaultFont = al_load_ttf_font("LabMono-Regular.otf", DEFAULT_FONT_HEIGHT, 0);
+    defaultFontHalfSize = al_load_ttf_font("PublicPixel.ttf", DEFAULT_FONT_HEIGHT / 2, 0);
+    defaultFont = al_load_ttf_font("PublicPixel.ttf", DEFAULT_FONT_HEIGHT, 0);
+
+    fieldTitleFont = al_load_ttf_font("PublicPixel.ttf", FIELD_TITLE_FONT_HEIGHT, 0);
+    fieldCounterFont = al_load_ttf_font("PublicPixel.ttf", FIELD_COUNTER_FONT_HEIGHT, 0);
+
 }
 
 void Text::UnloadResources()
