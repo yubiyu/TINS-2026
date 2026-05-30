@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-class Mimic
+struct Mimic
 {
     int caste {};
 
@@ -16,10 +16,10 @@ class Mimic
 
     bool isStunner = false;
 
+    float xPosition {}; // Centered coords.
+    float yPosition {};
 
-public:
     void Initialize(int set_caste);
 
-
-
+    void Render();
 };

@@ -30,13 +30,7 @@ void Mimic::Initialize(int set_caste)
         isStunner = true;
         break;
         
-
-
-
         default:
         break;
     }
-
-
-
 }

@@ -26,6 +26,7 @@ WorldView
     static std::vector<ALLEGRO_BITMAP*> mimicAtlas_mimics;
 
     static ALLEGRO_BITMAP *captureAtlasPng;
+    static std::vector<ALLEGRO_BITMAP*> captureAtlas;
 
     static void Initialize();
     static void Uninitialize();
