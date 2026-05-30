@@ -15,6 +15,12 @@ ALLEGRO_BITMAP *Image::settingsVolumeBarEmptyPng;
 ALLEGRO_BITMAP *Image::gridFramePng;
 ALLEGRO_BITMAP *Image::gridPng;
 
+ALLEGRO_BITMAP *Image::polarityButtonPng;
+ALLEGRO_BITMAP *Image::polarityButtonFramePng;
+
+ALLEGRO_BITMAP *Image::tachyonBarPng;
+ALLEGRO_BITMAP *Image::tachyonBarFramePng;
+
 ALLEGRO_BITMAP *Image::mimicAtlasPng;
 std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_mimics;
 std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_phasingMimics;
@@ -50,6 +56,12 @@ void Image::LoadResources()
     gridFramePng = al_load_bitmap("gridFrame.png");
     gridPng = al_load_bitmap("grid.png");
 
+    polarityButtonPng = al_load_bitmap("polarityButton.png");
+    polarityButtonFramePng = al_load_bitmap("polarityButtonFrame.png");
+
+    tachyonBarPng = al_load_bitmap("tachyonBar.png");
+    tachyonBarFramePng = al_load_bitmap("tachyonBarFrame.png");
+
     mimicAtlasPng = al_load_bitmap("mimicAtlas.png");
     for (size_t i = 0; i < MimicData::NUM_CASTES; i++)
     {
@@ -75,6 +87,12 @@ void Image::UnloadResources()
 
     al_destroy_bitmap(gridFramePng);
     al_destroy_bitmap(gridPng);
+
+    al_destroy_bitmap(polarityButtonPng);
+    al_destroy_bitmap(polarityButtonFramePng);
+
+    al_destroy_bitmap(tachyonBarPng);
+    al_destroy_bitmap(tachyonBarFramePng);
 
     for (ALLEGRO_BITMAP *b : mimicAtlas_mimics)
         al_destroy_bitmap(b);

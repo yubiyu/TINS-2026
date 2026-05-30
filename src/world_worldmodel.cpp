@@ -51,7 +51,9 @@ void WorldModel::Update()
         {
             if(occupantMimic->inPhasing)
             {
-                
+                occupantMimic->phasingTicks --;
+                if(occupantMimic->phasingTicks <= 0)
+                    occupantMimic->inPhasing = false;
             }
         }
 
@@ -153,7 +155,7 @@ void WorldModel::CompleteAttackCell(size_t cell_index)
     std::cout << "Attack cell " << cell_index << std::endl;
 
     Mimic *target = mimicGrid[cell_index];
-    if (target)
+    if (target && !target->inPhasing)
     {
         target->health--;
         if (target->health <= 0)

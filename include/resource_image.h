@@ -21,6 +21,12 @@ WorldView
 */
     static ALLEGRO_BITMAP *gridFramePng;
     static ALLEGRO_BITMAP *gridPng;
+
+    static ALLEGRO_BITMAP *polarityButtonPng;
+    static ALLEGRO_BITMAP *polarityButtonFramePng;
+
+    static ALLEGRO_BITMAP *tachyonBarPng;
+    static ALLEGRO_BITMAP *tachyonBarFramePng;
     
     static ALLEGRO_BITMAP *mimicAtlasPng;
     static std::vector<ALLEGRO_BITMAP*> mimicAtlas_mimics;

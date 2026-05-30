@@ -95,8 +95,14 @@ void WorldView::DrawTitle()
 }
 void WorldView::DrawGrid()
 {
-    al_draw_bitmap(Image::gridFramePng, Field::field.frameXPosition, Field::field.frameYPosition, 0);
+    al_draw_bitmap(Image::gridFramePng, Field::field.gridFrameXPosition, Field::field.gridFrameYPosition, 0);
     al_draw_bitmap(Image::gridPng, Field::field.gridXPosition, Field::field.gridYPosition, 0);
+
+    al_draw_bitmap(Image::polarityButtonPng, Field::field.polarityButtonXPosition, Field::field.polarityButtonYPosition, 0);
+    al_draw_bitmap(Image::polarityButtonFramePng, Field::field.polarityButtonFrameXPosition, Field::field.polarityButtonFrameYPosition, 0);
+    
+    al_draw_bitmap(Image::tachyonBarPng, Field::field.tachyonBarXPosition, Field::field.tachyonBarYPosition, 0);
+    al_draw_bitmap(Image::tachyonBarFramePng, Field::field.tachyonBarXPosition, Field::field.tachyonBarYPosition, 0);
 }
 void WorldView::DrawCounters()
 {
@@ -143,6 +149,9 @@ void WorldView::DrawMimics()
         Mimic *mimic = WorldModel::world.mimicGrid[i];
 
         if (!mimic)
+            continue;
+
+        if (mimic->inPhasing)
             continue;
 
         size_t mimicCaste = mimic->caste;

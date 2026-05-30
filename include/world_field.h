@@ -13,8 +13,15 @@ struct Field
     int gridWidth{}, gridHeight{};
     int gridXPosition{}, gridYPosition{};
 
-    int frameWidth{}, frameHeight{};
-    int frameXPosition{}, frameYPosition{};
+    int gridFrameWidth{}, gridFrameHeight{};
+    int gridFrameXPosition{}, gridFrameYPosition{};
+
+    int polarityButtonWidth {}, polarityButtonHeight {};
+    int polarityButtonXPosition{}, polarityButtonYPosition {};
+    int polarityButtonFrameXPosition{}, polarityButtonFrameYPosition{};
+
+    int tachyonBarWidth {}, tachyonBarHeight {};
+    int tachyonBarXPosition{}, tachyonBarYPosition{};
 
     std::string titleString{};
     int titleStringXPosition{}, titleStringYPosition{};

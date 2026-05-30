@@ -14,18 +14,28 @@ Field Field::field;
 
 void Field::Initialize()
 {
-    gridWidth = 96*4;
-    gridHeight = 96*4;
+    gridWidth = FieldData::CELL_WIDTH*3;
+    gridHeight = FieldData::CELL_HEIGHT*3;
     gridXPosition = Display::width/2 - gridWidth/2;
     gridYPosition = Display::height/2 - gridHeight/2;
 
-    frameWidth = gridWidth + 4;
-    frameHeight = gridHeight + 4;
-    frameXPosition = gridXPosition - 4;
-    frameYPosition = gridYPosition - 4;
+    gridFrameWidth = gridWidth + 4;
+    gridFrameHeight = gridHeight + 4;
+    gridFrameXPosition = gridXPosition - 4;
+    gridFrameYPosition = gridYPosition - 4;
+
+
+    polarityButtonWidth = 64;
+    polarityButtonXPosition = gridXPosition;
+    polarityButtonYPosition = gridYPosition + gridHeight;
+    polarityButtonFrameXPosition = polarityButtonXPosition - 4;
+    polarityButtonFrameYPosition = polarityButtonYPosition;
+
+    tachyonBarXPosition = polarityButtonXPosition + polarityButtonWidth;
+    tachyonBarYPosition = polarityButtonYPosition;
 
     titleStringXPosition = Display::width/2;
-    titleStringYPosition = frameYPosition/2 - Text::FIELD_TITLE_FONT_HEIGHT/2;
+    titleStringYPosition = gridFrameYPosition/2 - Text::FIELD_TITLE_FONT_HEIGHT/2;
 
 
     for(size_t i = 0; i < GRID_CELLS; i++)
@@ -57,8 +67,8 @@ void Field::Reset()
         capturerFrame[i] = 0;
     }
 
-    baselineSpawnCD = Timer::FPS * 0.5;
-    spawnCDLowerLimit = baselineSpawnCD;
+    baselineSpawnCD = Timer::FPS * 1.5;
+    spawnCDLowerLimit = baselineSpawnCD - Timer::FPS * 0.5;
     spawnCDUpperLimit = baselineSpawnCD + Timer::FPS * 0.5;
 
     currentSpawnCD = spawnCDLowerLimit;
