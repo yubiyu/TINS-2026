@@ -20,8 +20,6 @@ struct Camera
     int viewWidth {}, viewHeight {};
 
     /*
-    Zoom
-    */
     ALLEGRO_TRANSFORM transform; // The sum of all transformations: translate, scale, rotate, invert, etc.
     ALLEGRO_TRANSFORM identityTransform; // Untransformed. Just save a copy of this so I don't have to set up transform from scratch before every Render().
 
@@ -33,7 +31,7 @@ struct Camera
     const float ZOOM_STEP = 0.5; 
     const float ZOOM_MIN = 1.0; // Draw scaling at the lowest/furthest zoom magnification.
     const float ZOOM_MAX = 8.0; // Draw scaling at the highest/closest zoom magnification.
-
+    */
 public:
     static Camera worldCamera; // Shared camera instance. There can be more than one such instance at a time, for a camera swapping effect.
 
@@ -41,12 +39,12 @@ public:
     void Uninitialize();
 
     void Update();
-    void UpdateTransform();
+    //void UpdateTransform();
     
     void UpdateLocation();
     void SetXY(float set_x, float set_y);
-    void ZoomIn();
-    void ZoomOut();
-    void UpdateZoomXYCenter();
+    //void ZoomIn();
+    //void ZoomOut();
+    //void UpdateZoomXYCenter();
     void SetViewDimensions(int view_width, int view_height);
 };

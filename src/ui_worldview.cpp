@@ -40,13 +40,15 @@ void WorldView::Reset()
 
 void WorldView::InputMouse()
 {
-    if (!CheckMouseInUI())
-        return;
+    //if (!CheckMouseInUI())
+        //return;
 
+    /*
     if (Mouse::currentZPosition > Mouse::previousZPosition)
         Camera::worldCamera.ZoomIn();
     else if (Mouse::currentZPosition < Mouse::previousZPosition)
         Camera::worldCamera.ZoomOut();
+    */
 
 }
 void WorldView::InputKeyboard()
@@ -67,14 +69,14 @@ void WorldView::UpdateBuffer()
     al_set_target_bitmap(buffer);
     al_clear_to_color(Palette::transparent);
 
-    al_use_transform(&Camera::worldCamera.transform);
+    //al_use_transform(&Camera::worldCamera.transform);
 
 
 
     if (drawDebugPrimitives)
         DrawingUtil::al_draw_inbounds_rectangle(0, 0, width, height, Palette::debugBlue, 1.0);
 
-    al_use_transform(&Camera::worldCamera.identityTransform);
+    //al_use_transform(&Camera::worldCamera.identityTransform);
 
     al_set_target_bitmap(previousBitmap);
 }
