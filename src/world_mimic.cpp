@@ -6,6 +6,8 @@
 
 void Mimic::Initialize(int set_caste)
 {
+    phasingTicks = MimicData::PHASING_TIME;
+
     int caste = set_caste;
     switch(caste)
     {

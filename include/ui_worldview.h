@@ -30,6 +30,7 @@ public:
     void DrawGrid();
     void DrawTitle();
     void DrawCounters();
+    void DrawPhaseImages();
     void DrawMimics();
     void DrawCapturers();
 };

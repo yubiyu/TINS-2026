@@ -1,5 +1,7 @@
 #include "world_field.h"
 
+#include "data_field.h"
+
 #include "core_display.h"
 #include "core_timer.h"
 #include "core_random.h"
@@ -25,6 +27,17 @@ void Field::Initialize()
     titleStringXPosition = Display::width/2;
     titleStringYPosition = frameYPosition/2 - Text::FIELD_TITLE_FONT_HEIGHT/2;
 
+
+    for(size_t i = 0; i < GRID_CELLS; i++)
+    {
+        int col = i%Field::GRID_COLS;
+        int row = i/Field::GRID_COLS;
+        float x = Field::field.gridXPosition + FieldData::CELL_WIDTH*col;
+        float y = Field::field.gridYPosition + FieldData::CELL_HEIGHT*row;
+
+        cellXYPosition[i] = {x,y};
+    }
+
     Reset();
 }
 
@@ -33,11 +46,15 @@ void Field::Reset()
     titleString = "mimic_suppression_field";
 
     attackNumTicks = Timer::FPS * 0.25;
+    attackCD_Required = Timer::FPS * 0.25;
+    attackCD_current = 0;
 
     for(size_t i = 0; i < GRID_CELLS; i++)
     {
         cellUnderAttack[i] = false;
         cellAttackProgress[i] = 0;
+
+        capturerFrame[i] = 0;
     }
 
     baselineSpawnCD = Timer::FPS * 0.5;

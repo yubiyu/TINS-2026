@@ -17,7 +17,10 @@
 
 #include "util_drawing.h"
 
+#include <allegro5/allegro5.h>
+
 #include <algorithm>
+#include <cmath>
 
 WorldView WorldView::worldView;
 
@@ -25,7 +28,7 @@ void WorldView::Initialize()
 {
     UIBase::Initialize(UIData::defaultUIRect[UIData::UI_WORLD_VIEW]);
 
-    //drawDebugPrimitives = true;
+    // drawDebugPrimitives = true;
 
     Camera::worldCamera.SetViewDimensions(width, height);
     // Set camera x/y speed here.
@@ -50,20 +53,16 @@ void WorldView::InputKeyboard()
     if (Keyboard::Pressed(ALLEGRO_KEY_ESCAPE))
         UIState::exit = true;
 
-    for(int keypadCheck = ALLEGRO_KEY_PAD_1; keypadCheck <= ALLEGRO_KEY_PAD_9; keypadCheck++)
+    for (int keypadCheck = ALLEGRO_KEY_PAD_1; keypadCheck <= ALLEGRO_KEY_PAD_9; keypadCheck++)
     {
-        if(Keyboard::Pressed(keypadCheck))
+        if (Field::field.attackCD_current == 0 && Keyboard::Pressed(keypadCheck))
         {
             int keyIndex = keypadCheck - ALLEGRO_KEY_PAD_1;
             size_t cellIndex = Field::keypadToIndex[keyIndex];
 
-            if(cellIndex < WorldModel::world.mimicGrid.size())
+            if (cellIndex < WorldModel::world.mimicGrid.size())
                 WorldModel::world.InitiateAttackCell(cellIndex);
         }
-    }
-
-    if (Keyboard::Pressed(ALLEGRO_KEY_PAD_5))
-    {
     }
 }
 void WorldView::Update()
@@ -82,6 +81,7 @@ void WorldView::UpdateBuffer()
     DrawTitle();
     DrawGrid();
     DrawCounters();
+    DrawPhaseImages();
     DrawMimics();
     DrawCapturers();
 
@@ -103,58 +103,90 @@ void WorldView::DrawCounters()
     size_t mimicIndex = 0;
 
     // Drawing order: left column first, then right.
-    for(size_t drawCol = 0; drawCol < 2; drawCol++)
+    for (size_t drawCol = 0; drawCol < 2; drawCol++)
     {
-        for(size_t drawRow = 0; drawRow < 3; drawRow++)
+        for (size_t drawRow = 0; drawRow < 3; drawRow++)
         {
-            int spriteDrawX = 64 + 704*drawCol;
-            int spriteDrawY = 128 + (128*drawRow);
+            int spriteDrawX = 64 + 704 * drawCol;
+            int spriteDrawY = 128 + (128 * drawRow);
             int textDrawX = spriteDrawX + 64 + 32;
-            int textDrawY = spriteDrawY + Text::FIELD_COUNTER_FONT_HEIGHT/2;
+            int textDrawY = spriteDrawY + Text::FIELD_COUNTER_FONT_HEIGHT / 2;
             std::string captureCountString = std::to_string(WorldModel::world.mimicsCaptured[mimicIndex]);
 
-            al_draw_bitmap(Image::mimicAtlas_mimics[mimicIndex], spriteDrawX, spriteDrawY, 0);
+            if (WorldModel::world.mimicsCaptured[mimicIndex] > 1)
+                al_draw_bitmap(Image::mimicAtlas_mimics[mimicIndex], spriteDrawX, spriteDrawY, 0);
+            else
+                al_draw_bitmap(Image::mimicAtlas_unknownMimics[mimicIndex], spriteDrawX, spriteDrawY, 0);
+
             TextUtil::al_draw_string(Text::fieldCounterFont, Palette::textDefault,
-                textDrawX, textDrawY,
-                ALLEGRO_ALIGN_LEFT, captureCountString);
+                                     textDrawX, textDrawY,
+                                     ALLEGRO_ALIGN_LEFT, captureCountString);
 
             mimicIndex++;
         }
     }
 }
+void WorldView::DrawPhaseImages()
+{
+    for(const auto& phaseImage : WorldModel::world.phaseImages)
+    {
+        size_t drawCaste = phaseImage->caste;
+        float drawX = phaseImage->location.current.x - MimicData::SPRITE_WIDTH/2;
+        float drawY = phaseImage->location.current.y - MimicData::SPRITE_HEIGHT/2;
+        al_draw_bitmap(Image::mimicAtlas_phasingMimics[drawCaste], drawX, drawY, 0);
+    }
+}
 void WorldView::DrawMimics()
 {
-    for(size_t i = 0; i < WorldModel::world.mimicGrid.size(); i++)
+    for (size_t i = 0; i < WorldModel::world.mimicGrid.size(); i++)
     {
-        Mimic* mimic = WorldModel::world.mimicGrid[i];
+        Mimic *mimic = WorldModel::world.mimicGrid[i];
 
-        if(!mimic)
+        if (!mimic)
             continue;
 
         size_t mimicCaste = mimic->caste;
 
-        float mimicDrawX = mimic->xPosition - MimicData::SPRITE_WIDTH/2;
-        float mimicDrawY = mimic->yPosition - MimicData::SPRITE_HEIGHT/2;
-        al_draw_bitmap(Image::mimicAtlas_mimics[mimicCaste], mimicDrawX, mimicDrawY, 0);
+        /*
+        if (Field::field.cellUnderAttack[i])
+        {
+            int capturerX = Field::field.cellXYPosition[i].x;
+            int capturerY = Field::field.cellXYPosition[i].y;
+            size_t capturerFrame = Field::field.capturerFrame[i];
+            ALLEGRO_BITMAP *previousBitmap = al_get_target_bitmap();
+            ALLEGRO_BITMAP *maskBuffer = al_create_bitmap(FieldData::CELL_WIDTH, FieldData::CELL_HEIGHT);
+            al_set_target_bitmap(maskBuffer);
+            al_draw_bitmap(Image::captureAtlas_mask[capturerFrame], 0, 0, 0);
+            al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_ZERO);
+            al_draw_bitmap(Image::mimicAtlas_mimics[mimicCaste],
+                           FieldData::CELL_WIDTH / 2 - MimicData::SPRITE_WIDTH / 2,
+                           FieldData::CELL_HEIGHT / 2 - MimicData::SPRITE_HEIGHT / 2,
+                           0);
+            al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
+            al_set_target_bitmap(previousBitmap);
+            al_draw_bitmap(maskBuffer, capturerX, capturerY, 0);
+            al_destroy_bitmap(maskBuffer);
+        }
+        else
+        {
+        */
+            float mimicDrawX = mimic->xPosition - MimicData::SPRITE_WIDTH / 2;
+            float mimicDrawY = mimic->yPosition - MimicData::SPRITE_HEIGHT / 2;
+            al_draw_bitmap(Image::mimicAtlas_mimics[mimicCaste], mimicDrawX, mimicDrawY, 0);
+        //}
     }
 }
 void WorldView::DrawCapturers()
 {
-    for(size_t i = 0; i < WorldModel::world.mimicGrid.size(); i++)
+    for (size_t i = 0; i < WorldModel::world.mimicGrid.size(); i++)
     {
-        if(!Field::field.cellUnderAttack[i])
+        if (!Field::field.cellUnderAttack[i])
             continue;
 
-        int col = i%Field::GRID_COLS;
-        int row = i/Field::GRID_COLS;
+        float drawX = Field::field.cellXYPosition[i].x;
+        float drawY = Field::field.cellXYPosition[i].y;
+        size_t drawCapturerFrame = Field::field.capturerFrame[i];
 
-        float drawX = Field::field.gridXPosition + FieldData::CELL_WIDTH*col;
-        float drawY = Field::field.gridYPosition + FieldData::CELL_HEIGHT*row;
-
-        float capturerProgress = static_cast<float>(Field::field.cellAttackProgress[i]) / Field::field.attackNumTicks;
-        size_t capturerFrame = capturerProgress * (FieldData::CAPTURE_ANIMATION_NUM_FRAMES - 1);
-
-        al_draw_bitmap(Image::captureAtlas[capturerFrame], drawX, drawY, 0);
-        
+        al_draw_bitmap(Image::captureAtlas[drawCapturerFrame], drawX, drawY, 0);
     }
 }

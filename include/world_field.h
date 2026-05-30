@@ -1,5 +1,7 @@
 #pragma once
 
+#include "component_point.h"
+
 #include <allegro5/allegro5.h>
 
 #include <string>
@@ -34,6 +36,8 @@ struct Field
     };
 
     int attackNumTicks {};
+    int attackCD_Required {};
+    int attackCD_current {};
 
     bool cellUnderAttack[GRID_CELLS] {};
     int cellAttackProgress[GRID_CELLS] {};
@@ -43,8 +47,12 @@ struct Field
     int spawnCDLowerLimit{};
     int currentSpawnCD{};
 
-    static Field field;
+    size_t capturerFrame[GRID_CELLS] {};
 
+    Point2Df cellXYPosition[GRID_CELLS] {};
+
+
+    static Field field;
     void Initialize();
     void Reset();
 

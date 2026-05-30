@@ -16,10 +16,13 @@ ALLEGRO_BITMAP *Image::gridFramePng;
 ALLEGRO_BITMAP *Image::gridPng;
 
 ALLEGRO_BITMAP *Image::mimicAtlasPng;
-std::vector<ALLEGRO_BITMAP*> Image::mimicAtlas_mimics;
+std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_mimics;
+std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_phasingMimics;
+std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_unknownMimics;
 
 ALLEGRO_BITMAP *Image::captureAtlasPng;
-std::vector<ALLEGRO_BITMAP*> Image::captureAtlas;
+std::vector<ALLEGRO_BITMAP *> Image::captureAtlas;
+std::vector<ALLEGRO_BITMAP *> Image::captureAtlas_mask;
 
 void Image::Initialize()
 {
@@ -48,13 +51,19 @@ void Image::LoadResources()
     gridPng = al_load_bitmap("grid.png");
 
     mimicAtlasPng = al_load_bitmap("mimicAtlas.png");
-    for(size_t i = 0; i < MimicData::NUM_CASTES; i++)
-        mimicAtlas_mimics.push_back( al_create_sub_bitmap(mimicAtlasPng, MimicData::SPRITE_WIDTH* i, 0, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
+    for (size_t i = 0; i < MimicData::NUM_CASTES; i++)
+    {
+        mimicAtlas_mimics.push_back(al_create_sub_bitmap(mimicAtlasPng, MimicData::SPRITE_WIDTH * i, MimicData::SPRITE_HEIGHT * 0, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
+        mimicAtlas_phasingMimics.push_back(al_create_sub_bitmap(mimicAtlasPng, MimicData::SPRITE_WIDTH * i, MimicData::SPRITE_HEIGHT * 1, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
+        mimicAtlas_unknownMimics.push_back(al_create_sub_bitmap(mimicAtlasPng, MimicData::SPRITE_WIDTH * i, MimicData::SPRITE_HEIGHT * 2, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
+    }
 
     captureAtlasPng = al_load_bitmap("captureAtlas.png");
-    for(size_t i = 0; i < FieldData::CAPTURE_ANIMATION_NUM_FRAMES; i++)
-        captureAtlas.push_back( al_create_sub_bitmap(captureAtlasPng, FieldData::CELL_WIDTH * i, 0, FieldData::CELL_WIDTH, FieldData::CELL_HEIGHT));
-
+    for (size_t i = 0; i < FieldData::CAPTURE_ANIMATION_NUM_FRAMES; i++)
+    {
+        captureAtlas.push_back(al_create_sub_bitmap(captureAtlasPng, FieldData::CELL_WIDTH * i, FieldData::CELL_HEIGHT * 0, FieldData::CELL_WIDTH, FieldData::CELL_HEIGHT));
+        captureAtlas_mask.push_back(al_create_sub_bitmap(captureAtlasPng, FieldData::CELL_WIDTH * i, FieldData::CELL_HEIGHT * 1, FieldData::CELL_WIDTH, FieldData::CELL_HEIGHT));
+    }
 }
 
 void Image::UnloadResources()
@@ -67,11 +76,17 @@ void Image::UnloadResources()
     al_destroy_bitmap(gridFramePng);
     al_destroy_bitmap(gridPng);
 
-    for(ALLEGRO_BITMAP* b : mimicAtlas_mimics)
+    for (ALLEGRO_BITMAP *b : mimicAtlas_mimics)
+        al_destroy_bitmap(b);
+    for (ALLEGRO_BITMAP *b : mimicAtlas_phasingMimics)
+        al_destroy_bitmap(b);
+    for (ALLEGRO_BITMAP *b : mimicAtlas_unknownMimics)
         al_destroy_bitmap(b);
     al_destroy_bitmap(mimicAtlasPng);
 
-    for(ALLEGRO_BITMAP* b : captureAtlas)
+    for (ALLEGRO_BITMAP *b : captureAtlas)
+        al_destroy_bitmap(b);
+    for (ALLEGRO_BITMAP *b : captureAtlas_mask)
         al_destroy_bitmap(b);
     al_destroy_bitmap(captureAtlasPng);
 }

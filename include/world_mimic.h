@@ -6,6 +6,9 @@ struct Mimic
 {
     int caste {};
 
+    bool inPhasing = true;
+    int phasingTicks = 0;
+
     int health = 1;
     int ticksToAttack = 60 * 4;
 

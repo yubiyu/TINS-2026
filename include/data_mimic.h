@@ -9,6 +9,10 @@ struct MimicData
     static const int SPRITE_WIDTH = 64;
     static const int SPRITE_HEIGHT = 64;
 
+    static int PHASING_DISTANCE;
+    static int PHASING_TIME;
+    static int PHASING_SPEED; 
+
     enum enumMimicCaste
     {
         CASTE_DRONE,

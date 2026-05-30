@@ -8,6 +8,7 @@
 #include "data_field.h"
 
 #include <iostream>
+#include <algorithm>
 
 WorldModel WorldModel::world;
 
@@ -22,7 +23,6 @@ void WorldModel::Uninitialize()
 
 void WorldModel::Reset()
 {
-
     for (auto &mimic : mimicGrid)
         mimic = nullptr;
 
@@ -32,28 +32,66 @@ void WorldModel::Reset()
 
 void WorldModel::Update()
 {
+    if (Field::field.attackCD_current > 0)
+        Field::field.attackCD_current--;
+
     Field::field.ProgressSpawnCD();
     if (Field::field.currentSpawnCD <= 0)
     {
         int mimicsToSpawn = Field::field.SimultaneousSpawnRNG();
-        for(int i = 0; i < mimicsToSpawn; i++)
+        for (int i = 0; i < mimicsToSpawn; i++)
             SpawnMimic();
         Field::field.ResetSpawnCD();
     }
 
-    for(size_t i = 0; i < Field::GRID_CELLS; i++)
+    for (size_t i = 0; i < Field::GRID_CELLS; i++)
     {
-        if(Field::field.cellUnderAttack[i])
+        Mimic* occupantMimic = mimicGrid[i];
+        if(occupantMimic)
         {
-            Field::field.cellAttackProgress[i] ++;
-            if(Field::field.cellAttackProgress[i] >= Field::field.attackNumTicks)
+            if(occupantMimic->inPhasing)
             {
-                AttackCell(i);
+                
+            }
+        }
+
+
+        if (Field::field.cellUnderAttack[i])
+        {
+            Field::field.cellAttackProgress[i]++;
+            float capturerProgress = static_cast<float>(Field::field.cellAttackProgress[i]) / Field::field.attackNumTicks;
+            Field::field.capturerFrame[i] = std::ceil(capturerProgress * (FieldData::CAPTURE_ANIMATION_NUM_FRAMES - 1));
+
+            if (Field::field.cellAttackProgress[i] >= Field::field.attackNumTicks)
+            {
+                CompleteAttackCell(i);
                 Field::field.cellAttackProgress[i] = 0;
                 Field::field.cellUnderAttack[i] = false;
             }
         }
     }
+
+    for (const auto &phaseImage : phaseImages)
+    {
+        phaseImage->location.Update();
+        if (phaseImage->location.atDestination)
+            phaseImage->active = false;
+    }
+
+    auto it = std::remove_if(
+        phaseImages.begin(),
+        phaseImages.end(),
+        [](PhaseImage *phaseImage)
+        {
+            if (!phaseImage->active)
+            {
+                delete phaseImage;
+                return true;
+            }
+            return false;
+        });
+
+    phaseImages.erase(it, phaseImages.end());
 }
 
 void WorldModel::SpawnMimic()
@@ -77,29 +115,55 @@ void WorldModel::SpawnMimic()
 
     spawnMimic->xPosition = Field::field.gridXPosition +
                             spawnCol * FieldData::CELL_WIDTH +
-                            FieldData::CELL_WIDTH/2;
+                            FieldData::CELL_WIDTH / 2;
 
     spawnMimic->yPosition = Field::field.gridYPosition +
                             spawnRow * FieldData::CELL_HEIGHT +
-                            FieldData::CELL_HEIGHT/2;
+                            FieldData::CELL_HEIGHT / 2;
 
     mimicGrid[gridMimicsIndex] = spawnMimic;
+
+    PhaseImage *leftPhase = new PhaseImage();
+    leftPhase->Initialize(spawnMimic->xPosition - MimicData::PHASING_DISTANCE, spawnMimic->yPosition,
+        spawnMimic->xPosition, spawnMimic->yPosition);
+    
+    PhaseImage *rightPhase = new PhaseImage();
+    rightPhase->Initialize(spawnMimic->xPosition + MimicData::PHASING_DISTANCE, spawnMimic->yPosition,
+        spawnMimic->xPosition, spawnMimic->yPosition);
+
+    phaseImages.push_back(leftPhase);
+    phaseImages.push_back(rightPhase);
 }
 
 void WorldModel::InitiateAttackCell(size_t cell_index)
 {
+    if (Field::field.cellUnderAttack[cell_index])
+        return;
+
+    Field::field.attackCD_current = Field::field.attackCD_Required;
+
     Field::field.cellUnderAttack[cell_index] = true;
     Field::field.cellAttackProgress[cell_index] = 0;
+
+    Field::field.capturerFrame[cell_index] = 0; // Probably not necessary as it gets recalculated in Update().
 }
 
-void WorldModel::AttackCell(size_t cell_index)
+void WorldModel::CompleteAttackCell(size_t cell_index)
 {
     std::cout << "Attack cell " << cell_index << std::endl;
 
-    Mimic* target = mimicGrid[cell_index];
-    if(target)
+    Mimic *target = mimicGrid[cell_index];
+    if (target)
     {
-        delete target;
-        mimicGrid[cell_index] = nullptr;
+        target->health--;
+        if (target->health <= 0)
+        {
+            mimicsCaptured[target->caste]++;
+            delete target;
+            mimicGrid[cell_index] = nullptr;
+        }
+        else
+        {
+        }
     }
 }
