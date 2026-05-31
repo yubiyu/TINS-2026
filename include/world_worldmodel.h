@@ -16,6 +16,8 @@ public:
 
     static WorldModel world; // Shared world instance.
 
+    std::array<size_t, Field::GRID_CELLS>redirectionArray {};
+
     std::vector<PhaseImage*>phaseImages;
     std::vector<Radiation*>radiation;
 
@@ -30,4 +32,7 @@ public:
 
     void InitiateAttackCell(size_t cell_index);
     void CompleteAttackCell(size_t cell_index);
+
+    void UpdateRedirectionArray();
+    void SetDefaultRedirectionArray();
 };

@@ -48,4 +48,5 @@ struct Mimic
     void Render();
     void DisplacePupil();
     void VaryPupil();
+    void SetRedirectionIndex(int set_index);
 };

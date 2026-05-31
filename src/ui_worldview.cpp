@@ -60,8 +60,10 @@ void WorldView::InputKeyboard()
             int keyIndex = keypadCheck - ALLEGRO_KEY_PAD_1;
             size_t cellIndex = Field::keypadToIndex[keyIndex];
 
-            if (cellIndex < WorldModel::world.mimicGrid.size())
-                WorldModel::world.InitiateAttackCell(cellIndex);
+            size_t redirectedCellIndex = WorldModel::world.redirectionArray[cellIndex];
+
+            WorldModel::world.InitiateAttackCell(redirectedCellIndex);
+            
         }
     }
 }

@@ -1,6 +1,7 @@
 #include "world_mimic.h"
-
 #include "data_mimic.h"
+
+#include "world_field.h"
 
 #include "core_random.h"
 
@@ -22,8 +23,6 @@ void Mimic::Initialize(int set_caste)
 
     case MimicData::CASTE_REDIRECTOR:
         isRedirector = true;
-        redirectionIndex = Random::RandomInt(0, 8);
-        pupilShape = MimicData::PUPIL_6;
         break;
 
     case MimicData::CASTE_EVADER:
@@ -95,4 +94,12 @@ void Mimic::VaryPupil()
         pupilVariant = 0;
 
     pupilSpriteIndex = pupilShape * MimicData::NUM_PUPIL_VARIANTS + pupilVariant;
+}
+
+void Mimic::SetRedirectionIndex(int set_index)
+{
+    redirectionIndex = set_index;
+    int pupilNumber = Field::indexToKeypad[redirectionIndex];
+
+    pupilShape = MimicData::PUPIL_1 + (pupilNumber - 1); // Honestly this could just be pupilShape = pupilNumber.
 }

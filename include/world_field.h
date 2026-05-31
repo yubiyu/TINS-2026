@@ -57,6 +57,17 @@ struct Field
         1, // 8
         2  // 9
     };
+    static constexpr int indexToKeypad[9]{
+        7, // Grid index [0] can be accessed by pressing keypad 7.
+        8,
+        9,
+        4,
+        5,
+        6,
+        1,
+        2,
+        3
+    };
 
     int attackNumTicks {};
     int attackCD_Required {};

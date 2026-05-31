@@ -14,16 +14,16 @@ WorldModel WorldModel::world;
 
 void WorldModel::Initialize()
 {
-    Field::field.Initialize();
+    Reset();
 }
 
 void WorldModel::Uninitialize()
 {
-    for(size_t i = 0; i < mimicGrid.size(); i++)
+    for (size_t i = 0; i < mimicGrid.size(); i++)
     {
-        if(mimicGrid[i])
+        if (mimicGrid[i])
             delete mimicGrid[i];
-        
+
         mimicGrid[i] = nullptr;
     }
 
@@ -38,11 +38,15 @@ void WorldModel::Uninitialize()
 
 void WorldModel::Reset()
 {
+    Field::field.Initialize();
+
     for (auto &mimic : mimicGrid)
         mimic = nullptr;
 
     for (auto &i : mimicsCaptured)
         i = 0;
+
+    SetDefaultRedirectionArray();
 }
 
 void WorldModel::Update()
@@ -85,6 +89,8 @@ void WorldModel::Update()
                 mimicsCaptured[occupantMimic->caste]++;
                 delete occupantMimic;
                 mimicGrid[i] = nullptr;
+
+                UpdateRedirectionArray();
             }
             else if (occupantMimic->isExploding)
             {
@@ -93,6 +99,8 @@ void WorldModel::Update()
                 Field::field.contamination += Field::field.contaminationPerLeak;
                 Field::field.contaminationDoT += Field::field.contaminationDoTPerLeak;
                 SpawnExplosionRadiation(occupantMimic->xPosition, occupantMimic->yPosition);
+
+                UpdateRedirectionArray();
             }
         }
 
@@ -165,9 +173,30 @@ void WorldModel::SpawnMimic()
     size_t spawnRow = gridMimicsIndex / Field::GRID_COLS;
 
     Mimic *spawnMimic = new Mimic();
+    mimicGrid[gridMimicsIndex] = spawnMimic;
+
     size_t spawnRoll = Random::RandomInt(MimicData::CASTE_MOOK, MimicData::CASTE_REDIRECTOR);
 
     spawnMimic->Initialize(spawnRoll);
+    if (spawnMimic->isRedirector)
+    {
+        std::vector<size_t> redirectableCells;
+        redirectableCells.reserve(Field::GRID_CELLS);
+        for (size_t i = 0; i < redirectionArray.size(); i++)
+            if (redirectionArray[i] == i && i != gridMimicsIndex) // i.e. hasn't been changed from its default value, and not about to redirect to itself.
+                redirectableCells.push_back(i);
+
+        if (!redirectableCells.empty())
+        {
+            size_t redirectionRoll = Random::RandomInt(0, redirectableCells.size() - 1);
+            spawnMimic->SetRedirectionIndex(redirectableCells[redirectionRoll]);
+            UpdateRedirectionArray();
+        }
+        else
+        {
+            spawnMimic->Initialize(MimicData::CASTE_MOOK);
+        }
+    }
 
     spawnMimic->xPosition = Field::field.gridXPosition +
                             spawnCol * FieldData::CELL_WIDTH +
@@ -176,8 +205,6 @@ void WorldModel::SpawnMimic()
     spawnMimic->yPosition = Field::field.gridYPosition +
                             spawnRow * FieldData::CELL_HEIGHT +
                             FieldData::CELL_HEIGHT / 2;
-
-    mimicGrid[gridMimicsIndex] = spawnMimic;
 
     PhaseImage *leftPhase = new PhaseImage();
     leftPhase->Initialize(spawnMimic->xPosition - MimicData::PHASING_DISTANCE, spawnMimic->yPosition,
@@ -223,4 +250,36 @@ void WorldModel::CompleteAttackCell(size_t cell_index)
     }
     else
         Field::field.contamination += Field::field.contaminationPerMisplay;
+}
+
+void WorldModel::UpdateRedirectionArray()
+{
+    SetDefaultRedirectionArray();
+    std::array<int, Field::GRID_CELLS> redirectionChanges;
+    redirectionChanges.fill(-1);
+
+    for (size_t i = 0; i < Field::GRID_CELLS; i++)
+    {
+        Mimic *checkRedirector = mimicGrid[i];
+        if (!checkRedirector)
+            continue;
+
+        if (checkRedirector->isRedirector)
+        {
+            redirectionChanges[i] = checkRedirector->redirectionIndex;
+            redirectionChanges[checkRedirector->redirectionIndex] = i;
+        }
+    }
+
+    for (size_t i = 0; i < Field::GRID_CELLS; i++)
+    {
+        if (redirectionChanges[i] == -1)
+            continue;
+
+        redirectionArray[i] = redirectionChanges[i];
+    }
+}
+void WorldModel::SetDefaultRedirectionArray()
+{
+    redirectionArray = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 }
