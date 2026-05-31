@@ -4,6 +4,7 @@
 #include "world_field.h"
 
 #include "core_random.h"
+#include "core_timer.h"
 
 void Mimic::Initialize(int set_caste)
 {
@@ -19,6 +20,9 @@ void Mimic::Initialize(int set_caste)
 
     case MimicData::CASTE_CRAB:
         health = 2;
+        shieldRotation = Random::RandomReal(0.0, ALLEGRO_PI);
+        shieldRotationRate = (ALLEGRO_PI / Timer::FPS) * 0.5;
+        shieldRotatesCCW = Random::FlipCoin();
         break;
 
     case MimicData::CASTE_REDIRECTOR:
@@ -36,19 +40,22 @@ void Mimic::Initialize(int set_caste)
 
     case MimicData::CASTE_VARIABLE:
     {
-        int copyRoll = Random::RandomInt(1, 4);
-        switch(copyRoll)
+        int copyRoll = Random::RandomInt(MimicData::CASTE_CRAB, MimicData::CASTE_STUNNER);
+        switch (copyRoll)
         {
-            case 1:
+        case MimicData::CASTE_CRAB:
             health = 2;
+            shieldRotation = Random::RandomReal(0.0, ALLEGRO_PI);
+            shieldRotationRate = (ALLEGRO_PI / Timer::FPS) * 0.5;
+            shieldRotatesCCW = Random::FlipCoin();
             break;
-            case 2:
+        case MimicData::CASTE_REDIRECTOR:
             isRedirector = true;
             break;
-            case 3:
+        case MimicData::CASTE_SPLITTER:
             isSplitter = true;
             break;
-            case 4:
+        case MimicData::CASTE_STUNNER:
             isStunner = true;
             pupilShape = MimicData::PUPIL_X;
             break;
@@ -96,11 +103,19 @@ void Mimic::Update()
         pupilVaryTicks_current = 0;
         VaryPupil();
     }
+
+    if (health >= 1)
+    {
+        if(shieldRotatesCCW)
+            shieldRotation -= shieldRotationRate;
+        else
+            shieldRotation += shieldRotationRate;
+    }
 }
 
 void Mimic::DisplacePupil()
 {
-    if(! isStunner)
+    if (!isStunner)
     {
         pupilDisplaceTicks_needed *= 0.75;
         if (pupilDisplaceTicks_needed < 1)

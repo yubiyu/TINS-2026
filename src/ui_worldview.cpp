@@ -235,8 +235,9 @@ void WorldView::DrawMimics()
         {
             al_draw_scaled_rotated_bitmap(Image::bubblePng,
                 MimicData::SPRITE_WIDTH/2, MimicData::SPRITE_HEIGHT/2,
-                
-            );
+                mimic->xPosition, mimic->yPosition,
+                2.0, 2.0, 
+                mimic->shieldRotation, 0);
         }
         //}
     }

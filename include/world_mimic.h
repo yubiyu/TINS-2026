@@ -41,6 +41,10 @@ struct Mimic
     int pupilVaryTicks_needed = 60 * 0.25;
     int pupilVaryTicks_current {};
 
+    float shieldRotation {};
+    float shieldRotationRate {};
+    bool shieldRotatesCCW {};
+
     void Initialize(int set_caste);
 
     void Update();
