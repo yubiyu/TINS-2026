@@ -28,8 +28,8 @@ void Field::Initialize()
     {
         int col = i % Field::GRID_COLS;
         int row = i / Field::GRID_COLS;
-        float x = Field::field.gridXPosition + FieldData::CELL_WIDTH * col;
-        float y = Field::field.gridYPosition + FieldData::CELL_HEIGHT * row;
+        float x = gridXPosition + FieldData::CELL_WIDTH * col;
+        float y = gridYPosition + FieldData::CELL_HEIGHT * row;
 
         cellXYPosition[i] = {x, y};
     }
@@ -50,6 +50,8 @@ void Field::Initialize()
 
     tachyonBarPhaseShift_Max = 32 - 1;
     tachyonBarPhaseShift_Change = (tachyonBarPhaseShift_Max / Timer::FPS) * 1.5;
+
+    dialogDisplacementTicks_max = Timer::FPS * 0.05;
 
     Reset();
 }
@@ -93,6 +95,40 @@ void Field::Reset()
 
     currentSpawnCD = spawnCDLowerLimit;
 }
+void Field::Update()
+{
+    if (isStunned)
+    {
+        stunRecovery_current++;
+        if (stunRecovery_current >= stunRecovery_Max)
+            isStunned = false;
+
+        dialogDisplacementTicks_current++;
+        if (dialogDisplacementTicks_current >= dialogDisplacementTicks_max)
+        {
+            dialogDisplacementTicks_current = 0;
+            DisplaceStunDialog();
+        }
+
+    }
+
+    contamination += contaminationDoT;
+
+    if (contaminationDoT > 0.0)
+        contaminationDoT -= contaminationDoTAttenuation;
+    if (contaminationDoT < 0.0)
+        contaminationDoT = 0.0;
+
+    if (contamination > 0.0)
+        contamination -= contaminationCleanupRate;
+    if (contamination < 0)
+        contamination = 0.0;
+
+    UpdateContaminationBar();
+
+    if (attackCD_current > 0)
+        attackCD_current--;
+}
 void Field::ResetSpawnCD()
 {
     currentSpawnCD = Random::RandomInt(spawnCDLowerLimit, spawnCDUpperLimit);
@@ -131,4 +167,18 @@ void Field::Stun()
 {
     isStunned = true;
     stunRecovery_current = 0;
+
+    dialogDisplacementTicks_current = 0;
+}
+
+void Field::DisplaceStunDialog()
+{
+    const int displaceMin = -16;
+    const int displaceMax = +16;
+
+    dialogFrameDisplacement =
+    {
+        Random::RandomInt(displaceMin, displaceMax),
+        Random::RandomInt(displaceMin, displaceMax)
+    };
 }

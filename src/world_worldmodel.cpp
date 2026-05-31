@@ -57,23 +57,7 @@ void WorldModel::Reset()
 
 void WorldModel::Update()
 {
-    Field::field.contamination += Field::field.contaminationDoT;
-
-    if (Field::field.contaminationDoT > 0.0)
-        Field::field.contaminationDoT -= Field::field.contaminationDoTAttenuation;
-    if (Field::field.contaminationDoT < 0.0)
-        Field::field.contaminationDoT = 0.0;
-
-    if (Field::field.contamination > 0.0)
-        Field::field.contamination -= Field::field.contaminationCleanupRate;
-    if (Field::field.contamination < 0)
-        Field::field.contamination = 0.0;
-
-    Field::field.UpdateContaminationBar();
-
-    if (Field::field.attackCD_current > 0)
-        Field::field.attackCD_current--;
-
+    Field::field.Update();
     Field::field.ProgressSpawnCD();
     if (Field::field.currentSpawnCD <= 0)
     {
@@ -202,7 +186,7 @@ void WorldModel::SpawnMimic()
     Mimic *spawnMimic = new Mimic();
     mimicGrid[gridMimicsIndex] = spawnMimic;
 
-    size_t spawnRoll = Random::RandomInt(MimicData::CASTE_MOOK, MimicData::CASTE_STUNNER);
+    size_t spawnRoll = Random::RandomInt(MimicData::CASTE_MOOK, MimicData::CASTE_VARIABLE);
 
     spawnMimic->Initialize(spawnRoll);
     if (spawnMimic->isRedirector)
@@ -306,10 +290,19 @@ void WorldModel::SpawnExplosionRadiation(float origin_x, float origin_y)
 }
 void WorldModel::SpawnStunLightning(float origin_x, float origin_y)
 {
-    std::cout << "Stun lightning " << origin_x << "," << origin_y << std::endl;
+    int numSparks = Random::RandomInt(1,5);
+    for(int i = 0; i < numSparks; i++)
+    {
+        StunLightning* spark = new StunLightning();
+        spark->Initialize(origin_x, origin_y);
+        stunLightnings.push_back(spark);
+    }
 }
 void WorldModel::InitiateAttackCell(size_t cell_index)
 {
+    if( Field::field.isStunned)
+        return;
+
     if (Field::field.cellUnderAttack[cell_index])
         return;
 

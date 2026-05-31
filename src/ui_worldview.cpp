@@ -1,5 +1,6 @@
 #include "ui_worldview.h"
 
+#include "core_display.h"
 #include "core_timer.h"
 #include "core_camera.h"
 #include "core_uistate.h"
@@ -63,7 +64,6 @@ void WorldView::InputKeyboard()
             size_t redirectedCellIndex = WorldModel::world.redirectionArray[cellIndex];
 
             WorldModel::world.InitiateAttackCell(redirectedCellIndex);
-            
         }
     }
 }
@@ -86,7 +86,9 @@ void WorldView::UpdateBuffer()
     DrawPhaseImages();
     DrawMimics();
     DrawCapturers();
+    DrawStunLightnings();
     DrawRadiation();
+    DrawDialog();
 
     al_set_target_bitmap(previousBitmap);
 }
@@ -245,6 +247,18 @@ void WorldView::DrawCapturers()
         al_draw_bitmap(Image::captureAtlas[drawCapturerFrame], drawX, drawY, 0);
     }
 }
+void WorldView::DrawStunLightnings()
+{
+    for (size_t i = 0; i < WorldModel::world.stunLightnings.size(); i++)
+    {
+        StunLightning *spark = WorldModel::world.stunLightnings[i];
+
+        al_draw_rotated_bitmap(Image::stunLightningAtlas[spark->variant],
+                               MimicData::STUN_LIGHTNING_WIDTH / 2, 0,
+                               spark->xPosition, spark->yPosition,
+                               spark->rotation, spark->isFlipped);
+    }
+}
 void WorldView::DrawRadiation()
 {
     for (size_t i = 0; i < WorldModel::world.radiations.size(); i++)
@@ -262,4 +276,12 @@ void WorldView::DrawRadiation()
                                drawX, drawY,
                                drawSpin, 0);
     }
+}
+void WorldView::DrawDialog()
+{
+    if (Field::field.isStunned)
+        al_draw_bitmap(Image::dialogRectPng,
+                       Display::width / 2 - FieldData::DIALOG_WIDTH/2 + Field::field.dialogFrameDisplacement.x,
+                       Display::height / 2 - FieldData::DIALOG_HEIGHT/2 + Field::field.dialogFrameDisplacement.y,
+                       0);
 }

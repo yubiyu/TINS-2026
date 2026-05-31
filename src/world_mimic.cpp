@@ -31,6 +31,7 @@ void Mimic::Initialize(int set_caste)
 
     case MimicData::CASTE_STUNNER:
         isStunner = true;
+        pupilShape = MimicData::PUPIL_X;
         break;
 
     case MimicData::CASTE_VARIABLE:
@@ -49,6 +50,7 @@ void Mimic::Initialize(int set_caste)
             break;
             case 4:
             isStunner = true;
+            pupilShape = MimicData::PUPIL_X;
             break;
         }
         break;
@@ -98,9 +100,12 @@ void Mimic::Update()
 
 void Mimic::DisplacePupil()
 {
-    pupilDisplaceTicks_needed *= 0.75;
-    if (pupilDisplaceTicks_needed < 1)
-        pupilDisplaceTicks_needed = 1;
+    if(! isStunner)
+    {
+        pupilDisplaceTicks_needed *= 0.75;
+        if (pupilDisplaceTicks_needed < 1)
+            pupilDisplaceTicks_needed = 1;
+    }
 
     pupilXDisplacement = Random::RandomReal(-9, 9);
     pupilYDisplacement = Random::RandomReal(-5, 5);

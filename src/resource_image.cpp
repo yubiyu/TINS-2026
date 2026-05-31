@@ -21,6 +21,8 @@ ALLEGRO_BITMAP *Image::revertButtonFramePng;
 ALLEGRO_BITMAP *Image::tachyonBarPng;
 ALLEGRO_BITMAP *Image::tachyonBarFramePng;
 
+ALLEGRO_BITMAP *Image::dialogRectPng;
+
 ALLEGRO_BITMAP *Image::mimicAtlasPng;
 std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_mimicsA;
 std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_mimicsB;
@@ -73,6 +75,8 @@ void Image::LoadResources()
     tachyonBarPng = al_load_bitmap("tachyonBar.png");
     tachyonBarFramePng = al_load_bitmap("tachyonBarFrame.png");
 
+    dialogRectPng = al_load_bitmap("dialogRect.png");
+
     mimicAtlasPng = al_load_bitmap("mimicAtlas.png");
     for (size_t i = 0; i < MimicData::NUM_CASTES; i++)
     {
@@ -121,6 +125,8 @@ void Image::UnloadResources()
 
     al_destroy_bitmap(tachyonBarPng);
     al_destroy_bitmap(tachyonBarFramePng);
+
+    al_destroy_bitmap(dialogRectPng);
 
     for (ALLEGRO_BITMAP *b : mimicAtlas_mimicsA)
         al_destroy_bitmap(b);

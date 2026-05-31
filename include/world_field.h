@@ -90,10 +90,18 @@ struct Field
     Point2Df cellXYPosition[GRID_CELLS] {};
 
 
+    int dialogDisplacementTicks_current {};
+    int dialogDisplacementTicks_max {};
+    Point2D dialogFrameDisplacement {};
+    Point2D dialogErrorDisplacement {};
+    Point2D dialogGravimetricInterferenceDisplacement {};
+    Point2D dialogRecalibratingDisplacement {};
+
     static Field field;
     void Initialize();
     void Reset();
 
+    void Update();
     void ResetSpawnCD();
     void ProgressSpawnCD();
     int SimultaneousSpawnRNG();
@@ -101,4 +109,5 @@ struct Field
     void UpdateContaminationBar();
 
     void Stun();
+    void DisplaceStunDialog();
 };
