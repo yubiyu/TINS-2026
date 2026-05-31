@@ -25,9 +25,8 @@ void Mimic::Initialize(int set_caste)
         isRedirector = true;
         break;
 
-    case MimicData::CASTE_EVADER:
-        health = 2;
-        isEvasive = true;
+    case MimicData::CASTE_SPLITTER:
+        isSplitter = true;
         break;
 
     case MimicData::CASTE_STUNNER:

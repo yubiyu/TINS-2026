@@ -19,7 +19,7 @@ struct Mimic
     bool isRedirector = false;
     size_t redirectionIndex  = 0;
 
-    bool isEvasive = false;
+    bool isSplitter = false;
 
     bool isStunner = false;
 

@@ -28,6 +28,7 @@ public:
     void Update();
     
     void SpawnMimic();
+    void SpawnMimic_Splitters(int origin_col, int origin_row);
     void SpawnExplosionRadiation(float origin_x, float origin_y);
 
     void InitiateAttackCell(size_t cell_index);

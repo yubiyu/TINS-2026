@@ -14,9 +14,8 @@ struct MimicData
         CASTE_MOOK,
         CASTE_CRAB,
         CASTE_REDIRECTOR,
-        CASTE_EVADER,
-        CASTE_STUNNER,
         CASTE_SPLITTER,
+        CASTE_STUNNER,
         CASTE_BOMB,
         CASTE_CASTELLAN
     };

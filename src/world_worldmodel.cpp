@@ -175,7 +175,7 @@ void WorldModel::SpawnMimic()
     Mimic *spawnMimic = new Mimic();
     mimicGrid[gridMimicsIndex] = spawnMimic;
 
-    size_t spawnRoll = Random::RandomInt(MimicData::CASTE_MOOK, MimicData::CASTE_REDIRECTOR);
+    size_t spawnRoll = Random::RandomInt(MimicData::CASTE_MOOK, MimicData::CASTE_SPLITTER);
 
     spawnMimic->Initialize(spawnRoll);
     if (spawnMimic->isRedirector)
@@ -217,6 +217,57 @@ void WorldModel::SpawnMimic()
     phaseImages.push_back(leftPhase);
     phaseImages.push_back(rightPhase);
 }
+void WorldModel::SpawnMimic_Splitters(int origin_col, int origin_row)
+{
+    /*
+    The hackiest garbage function of all time.
+    */
+
+    std::vector<size_t> adjacentCells{};
+    if (origin_row > 0)
+        adjacentCells.push_back((origin_row - 1) * Field::GRID_COLS + origin_col);
+    if (origin_row < 2)
+        adjacentCells.push_back((origin_row + 1) * Field::GRID_COLS + origin_col);
+
+    if (origin_col > 0)
+        adjacentCells.push_back(origin_row * Field::GRID_COLS + (origin_col - 1));
+    if (origin_col < 2)
+        adjacentCells.push_back(origin_row * Field::GRID_COLS + (origin_col + 1));
+
+    for (size_t i = 0; i < adjacentCells.size(); i++)
+    {
+        if(mimicGrid[adjacentCells[i]]) // Already occupied, bud.
+            continue;
+
+        if (Random::RandomInt(1, 4) != 4)
+            continue;
+
+        Mimic *splitter = new Mimic();
+        splitter->Initialize(MimicData::CASTE_SPLITTER);
+        mimicGrid[adjacentCells[i]] = splitter;
+
+
+        int spawnCol = adjacentCells[i] % Field::GRID_COLS;
+        int spawnRow = adjacentCells[i] / Field::GRID_COLS;
+
+        splitter->xPosition = Field::field.gridXPosition +
+                              spawnCol * FieldData::CELL_WIDTH +
+                              FieldData::CELL_WIDTH / 2;
+
+        splitter->yPosition = Field::field.gridYPosition +
+                              spawnRow * FieldData::CELL_HEIGHT +
+                              FieldData::CELL_HEIGHT / 2;
+
+        PhaseImage *leftPhase = new PhaseImage();
+        leftPhase->Initialize(splitter->xPosition - MimicData::PHASING_DISTANCE, splitter->yPosition,
+                              splitter->xPosition, splitter->yPosition);
+        PhaseImage *rightPhase = new PhaseImage();
+        rightPhase->Initialize(splitter->xPosition + MimicData::PHASING_DISTANCE, splitter->yPosition,
+                               splitter->xPosition, splitter->yPosition);
+        phaseImages.push_back(leftPhase);
+        phaseImages.push_back(rightPhase);
+    }
+}
 void WorldModel::SpawnExplosionRadiation(float origin_x, float origin_y)
 {
     for (int i = 0; i < 100; i++)
@@ -246,7 +297,24 @@ void WorldModel::CompleteAttackCell(size_t cell_index)
     {
         target->health--;
         if (target->health <= 0)
+        {
+            if (target->isSplitter)
+            {
+                PhaseImage *leftPhase = new PhaseImage();
+                leftPhase->Initialize(target->xPosition, target->yPosition,
+                                      target->xPosition - MimicData::PHASING_DISTANCE, target->yPosition);
+                PhaseImage *rightPhase = new PhaseImage();
+                rightPhase->Initialize(target->xPosition, target->yPosition,
+                                       target->xPosition + MimicData::PHASING_DISTANCE, target->yPosition);
+                phaseImages.push_back(leftPhase);
+                phaseImages.push_back(rightPhase);
+
+                SpawnMimic_Splitters(cell_index % Field::GRID_COLS,
+                                     cell_index / Field::GRID_ROWS);
+            }
+            
             target->isCaptured = true;
+        }
     }
     else
         Field::field.contamination += Field::field.contaminationPerMisplay;
