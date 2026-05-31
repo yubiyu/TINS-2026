@@ -10,13 +10,13 @@ void Mimic::Initialize(int set_caste)
 
     phasingTicks = MimicData::PHASING_TIME;
 
-    int caste = set_caste;
+    caste = set_caste;
     switch (caste)
     {
     case MimicData::CASTE_MOOK:
         break;
 
-    case MimicData::CASTE_ARMOURED:
+    case MimicData::CASTE_CRAB:
         health = 2;
         break;
 
@@ -71,7 +71,7 @@ void Mimic::Update()
 
 void Mimic::DisplacePupil()
 {
-    pupilChangeTicks_needed *= 0.8;
+    pupilChangeTicks_needed *= 0.75;
     if (pupilChangeTicks_needed < 1)
         pupilChangeTicks_needed = 1;
 

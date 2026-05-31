@@ -12,7 +12,7 @@ struct MimicData
     enum enumMimicCaste : size_t
     {
         CASTE_MOOK,
-        CASTE_ARMOURED,
+        CASTE_CRAB,
         CASTE_REDIRECTOR,
         CASTE_EVADER,
         CASTE_STUNNER,

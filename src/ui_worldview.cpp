@@ -102,7 +102,7 @@ void WorldView::DrawGrid()
     al_draw_bitmap(Image::polarityButtonPng, Field::field.polarityButtonXPosition, Field::field.polarityButtonYPosition, 0);
     al_draw_bitmap(Image::polarityButtonFramePng, Field::field.polarityButtonFrameXPosition, Field::field.polarityButtonFrameYPosition, 0);
 
-
+    // Barberpole effect using two rectangular draw regions.
     float firstPart = std::min(Field::field.tachyonBarCurrentWidth, Field::field.tachyonBarMaxWidth - Field::field.tachyonBarPhaseShift_Current);
     al_draw_bitmap_region(
         Image::tachyonBarPng,
@@ -112,7 +112,6 @@ void WorldView::DrawGrid()
         Field::field.tachyonBarXPosition,
         Field::field.tachyonBarYPosition,
         0);
-
     float secondPart = Field::field.tachyonBarCurrentWidth - firstPart;
     if (secondPart > 0)
     {
@@ -127,6 +126,15 @@ void WorldView::DrawGrid()
     }
 
     al_draw_bitmap(Image::tachyonBarFramePng, Field::field.tachyonBarXPosition, Field::field.tachyonBarYPosition, 0);
+
+    if (Field::field.tachyonBarCurrentWidth > 0.0 && Field::field.tachyonBarCurrentWidth < Field::field.tachyonBarMaxWidth)
+    {
+        float x1 = Field::field.tachyonBarXPosition + Field::field.tachyonBarCurrentWidth;
+        float y1 = Field::field.tachyonBarYPosition;
+        float x2 = x1 + 4;
+        float y2 = y1 + Field::field.tachyonBarHeight - 8;
+        al_draw_filled_rectangle(x1, y1, x2, y2, Palette::colours[Palette::COL_BLACK]);
+    }
 }
 void WorldView::DrawCounters()
 {
@@ -143,8 +151,11 @@ void WorldView::DrawCounters()
             int textDrawY = spriteDrawY + Text::FIELD_COUNTER_FONT_HEIGHT / 2;
             std::string captureCountString = std::to_string(WorldModel::world.mimicsCaptured[mimicIndex]);
 
-            if (WorldModel::world.mimicsCaptured[mimicIndex] > 1)
+            if (WorldModel::world.mimicsCaptured[mimicIndex] >= 1)
+            {
                 al_draw_bitmap(Image::mimicAtlas_mimicsB[mimicIndex], spriteDrawX, spriteDrawY, 0);
+                al_draw_bitmap(Image::pupilAtlas[MimicData::PUPIL_DOT], spriteDrawX, spriteDrawY, 0);
+            }
             else
                 al_draw_bitmap(Image::mimicAtlas_unknownMimics[mimicIndex], spriteDrawX, spriteDrawY, 0);
 
