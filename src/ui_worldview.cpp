@@ -102,11 +102,29 @@ void WorldView::DrawGrid()
     al_draw_bitmap(Image::polarityButtonPng, Field::field.polarityButtonXPosition, Field::field.polarityButtonYPosition, 0);
     al_draw_bitmap(Image::polarityButtonFramePng, Field::field.polarityButtonFrameXPosition, Field::field.polarityButtonFrameYPosition, 0);
 
-    al_draw_bitmap_region(Image::tachyonBarPng,
-                          0, 0,
-                          Field::field.tachyonBarCurrentWidth, Field::field.tachyonBarHeight,
-                          Field::field.tachyonBarXPosition, Field::field.tachyonBarYPosition,
-                          0);
+
+    float firstPart = std::min(Field::field.tachyonBarCurrentWidth, Field::field.tachyonBarMaxWidth - Field::field.tachyonBarPhaseShift_Current);
+    al_draw_bitmap_region(
+        Image::tachyonBarPng,
+        Field::field.tachyonBarPhaseShift_Current, 0,
+        firstPart,
+        Field::field.tachyonBarHeight,
+        Field::field.tachyonBarXPosition,
+        Field::field.tachyonBarYPosition,
+        0);
+
+    float secondPart = Field::field.tachyonBarCurrentWidth - firstPart;
+    if (secondPart > 0)
+    {
+        al_draw_bitmap_region(
+            Image::tachyonBarPng,
+            0, 0,
+            secondPart,
+            Field::field.tachyonBarHeight,
+            Field::field.tachyonBarXPosition + firstPart,
+            Field::field.tachyonBarYPosition,
+            0);
+    }
 
     al_draw_bitmap(Image::tachyonBarFramePng, Field::field.tachyonBarXPosition, Field::field.tachyonBarYPosition, 0);
 }
@@ -218,9 +236,9 @@ void WorldView::DrawRadiation()
 {
     for (size_t i = 0; i < WorldModel::world.radiation.size(); i++)
     {
-        Radiation* rad = WorldModel::world.radiation[i];
+        Radiation *rad = WorldModel::world.radiation[i];
 
-        size_t drawIndex = 2*rad->largeParticle + rad->blackPolarity;
+        size_t drawIndex = 2 * rad->largeParticle + rad->blackPolarity;
         float drawX = rad->xPosition;
         float drawY = rad->yPosition;
         float drawCenter = rad->radius;

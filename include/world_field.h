@@ -35,6 +35,10 @@ struct Field
     float tachyonBarCurrentWidth {};
     int tachyonBarXPosition{}, tachyonBarYPosition{};
 
+    float tachyonBarPhaseShift_Current {};
+    float tachyonBarPhaseShift_Max {};
+    float tachyonBarPhaseShift_Change {};
+
     std::string titleString{};
     int titleStringXPosition{}, titleStringYPosition{};
 

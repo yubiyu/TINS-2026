@@ -14,6 +14,6 @@ void MimicData::Install()
     PHASING_TIME = Timer::FPS * 0.125;
     PHASING_SPEED = PHASING_DISTANCE / PHASING_TIME; 
 
-    TICKS_TO_DETONATION = Timer::FPS * 5.0;
+    TICKS_TO_DETONATION = Timer::FPS * 4.0;
 
 }
