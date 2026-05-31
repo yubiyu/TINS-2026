@@ -23,6 +23,7 @@ void Mimic::Initialize(int set_caste)
     case MimicData::CASTE_REDIRECTOR:
         isRedirector = true;
         redirectionIndex = Random::RandomInt(0, 8);
+        pupilShape = MimicData::PUPIL_6;
         break;
 
     case MimicData::CASTE_EVADER:
@@ -39,6 +40,7 @@ void Mimic::Initialize(int set_caste)
     }
 
     DisplacePupil();
+    VaryPupil();
 }
 
 void Mimic::Update()
@@ -61,20 +63,36 @@ void Mimic::Update()
         inFrameB = !inFrameB;
     }
 
-    pupilChangeTicks_current++;
-    if (pupilChangeTicks_current >= pupilChangeTicks_needed)
+    pupilDisplaceTicks_current++;
+    if (pupilDisplaceTicks_current >= pupilDisplaceTicks_needed)
     {
-        pupilChangeTicks_current = 0;
+        pupilDisplaceTicks_current = 0;
         DisplacePupil();
+    }
+
+    pupilVaryTicks_current++;
+    if (pupilVaryTicks_current >= pupilVaryTicks_needed)
+    {
+        pupilVaryTicks_current = 0;
+        VaryPupil();
     }
 }
 
 void Mimic::DisplacePupil()
 {
-    pupilChangeTicks_needed *= 0.75;
-    if (pupilChangeTicks_needed < 1)
-        pupilChangeTicks_needed = 1;
+    pupilDisplaceTicks_needed *= 0.75;
+    if (pupilDisplaceTicks_needed < 1)
+        pupilDisplaceTicks_needed = 1;
 
     pupilXDisplacement = Random::RandomReal(-9, 9);
     pupilYDisplacement = Random::RandomReal(-5, 5);
+}
+
+void Mimic::VaryPupil()
+{
+    pupilVariant++;
+    if (pupilVariant >= MimicData::NUM_PUPIL_VARIANTS)
+        pupilVariant = 0;
+
+    pupilSpriteIndex = pupilShape * MimicData::NUM_PUPIL_VARIANTS + pupilVariant;
 }

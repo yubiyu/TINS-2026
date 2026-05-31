@@ -154,7 +154,7 @@ void WorldView::DrawCounters()
             if (WorldModel::world.mimicsCaptured[mimicIndex] >= 1)
             {
                 al_draw_bitmap(Image::mimicAtlas_mimicsB[mimicIndex], spriteDrawX, spriteDrawY, 0);
-                al_draw_bitmap(Image::pupilAtlas[MimicData::PUPIL_DOT], spriteDrawX, spriteDrawY, 0);
+                al_draw_bitmap(Image::pupilAtlas[MimicData::PUPIL_DOT * MimicData::NUM_PUPIL_VARIANTS + 0], spriteDrawX, spriteDrawY, 0);
             }
             else
                 al_draw_bitmap(Image::mimicAtlas_unknownMimics[mimicIndex], spriteDrawX, spriteDrawY, 0);
@@ -221,7 +221,7 @@ void WorldView::DrawMimics()
         else
             al_draw_bitmap(Image::mimicAtlas_mimicsA[mimicCaste], mimicDrawX, mimicDrawY, 0);
 
-        size_t pupilIndex = mimic->pupilShape;
+        size_t pupilIndex = mimic->pupilSpriteIndex;
         float pupilDrawX = mimicDrawX + mimic->pupilXDisplacement;
         float pupilDrawY = mimicDrawY + mimic->pupilYDisplacement;
 

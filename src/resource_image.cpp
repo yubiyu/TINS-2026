@@ -80,8 +80,9 @@ void Image::LoadResources()
     }
 
     pupilAtlasPng = al_load_bitmap("pupilAtlas.png");
-    for (size_t i = 0; i < MimicData::NUM_PUPIL_SHAPES; i++)
-        pupilAtlas.push_back( al_create_sub_bitmap(pupilAtlasPng, MimicData::SPRITE_WIDTH * i, 0, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
+    for (size_t y = 0; y < MimicData::NUM_PUPIL_SHAPES; y++)
+        for(size_t x = 0; x < MimicData::NUM_PUPIL_VARIANTS; x++)
+            pupilAtlas.push_back( al_create_sub_bitmap(pupilAtlasPng, x*MimicData::SPRITE_WIDTH, y*MimicData::SPRITE_HEIGHT, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
 
     captureAtlasPng = al_load_bitmap("captureAtlas.png");
     for (size_t i = 0; i < FieldData::CAPTURE_ANIMATION_NUM_FRAMES; i++)

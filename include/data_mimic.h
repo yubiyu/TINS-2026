@@ -36,6 +36,7 @@ struct MimicData
         PUPIL_9
     };
     static const size_t NUM_PUPIL_SHAPES = PUPIL_9 + 1;
+    static const size_t NUM_PUPIL_VARIANTS = 4;
 
 
     static const int SPRITE_WIDTH = 64;

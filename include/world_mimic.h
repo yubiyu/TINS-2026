@@ -31,10 +31,15 @@ struct Mimic
     int frameChangeTicks_current {};
 
     int pupilShape {};
+    size_t pupilVariant {};
+    size_t pupilSpriteIndex {};
 
-    int pupilChangeTicks_needed = 60 * 1.0;
-    int pupilChangeTicks_current {};
+    int pupilDisplaceTicks_needed = 60 * 1.0;
+    int pupilDisplaceTicks_current {};
     float pupilXDisplacement {}, pupilYDisplacement {};
+
+    int pupilVaryTicks_needed = 60 * 0.25;
+    int pupilVaryTicks_current {};
 
     void Initialize(int set_caste);
 
@@ -42,4 +47,5 @@ struct Mimic
 
     void Render();
     void DisplacePupil();
+    void VaryPupil();
 };

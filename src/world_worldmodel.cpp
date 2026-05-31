@@ -165,7 +165,7 @@ void WorldModel::SpawnMimic()
     size_t spawnRow = gridMimicsIndex / Field::GRID_COLS;
 
     Mimic *spawnMimic = new Mimic();
-    size_t spawnRoll = Random::RandomInt(MimicData::CASTE_MOOK, MimicData::CASTE_CRAB);
+    size_t spawnRoll = Random::RandomInt(MimicData::CASTE_MOOK, MimicData::CASTE_REDIRECTOR);
 
     spawnMimic->Initialize(spawnRoll);
 
