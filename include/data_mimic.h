@@ -17,9 +17,8 @@ struct MimicData
         CASTE_SPLITTER,
         CASTE_STUNNER,
         CASTE_BOMB,
-        CASTE_CASTELLAN
     };
-    static const size_t NUM_CASTES = CASTE_CASTELLAN + 1;
+    static const size_t NUM_CASTES = CASTE_BOMB + 1;
 
     enum enumPupilShapes : size_t
     {
