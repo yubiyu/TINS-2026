@@ -76,9 +76,9 @@ void Field::Reset()
     contaminationPerLeak = 10.0;
     contaminationDoTPerLeak = 0.1;
 
-    contaminationPerMisplay = 5.0;
+    contaminationPerMisplay = 10.0;
 
-    contaminationCleanupRate = 1.0 / Timer::FPS;
+    contaminationCleanupRate = 1.2 / Timer::FPS;
     contaminationDoTAttenuation = contaminationDoTPerLeak / (Timer::FPS * 2);
 
     isStunned = false;

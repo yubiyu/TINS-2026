@@ -46,8 +46,8 @@ void WorldModel::Reset()
 
     Field::field.Initialize();
 
-    for (auto &mimic : mimicGrid)
-        mimic = nullptr;
+    gameProgress = 0;
+    usingMaxSpawnableClade = true;
 
     for (auto &i : mimicsCaptured)
         i = 0;
@@ -76,7 +76,7 @@ void WorldModel::Update()
 
             if (occupantMimic->isCaptured)
             {
-                mimicsCaptured[occupantMimic->caste]++;
+                AddCapture(occupantMimic->clade);
                 delete occupantMimic;
                 mimicGrid[i] = nullptr;
 
@@ -145,14 +145,14 @@ void WorldModel::Update()
         });
     radiations.erase(rad_it, radiations.end());
 
-    for ( const auto &spark : stunLightnings)
+    for (const auto &spark : stunLightnings)
         spark->Update();
     auto spark_it = std::remove_if(
         stunLightnings.begin(),
         stunLightnings.end(),
         [](StunLightning *spark)
         {
-            if(!spark->isAlive)
+            if (!spark->isAlive)
             {
                 delete spark;
                 return true;
@@ -160,11 +160,6 @@ void WorldModel::Update()
             return false;
         });
     stunLightnings.erase(spark_it, stunLightnings.end());
-}
-
-void WorldModel::DeleteInactives()
-{
-    
 }
 
 void WorldModel::SpawnMimic()
@@ -186,9 +181,13 @@ void WorldModel::SpawnMimic()
     Mimic *spawnMimic = new Mimic();
     mimicGrid[gridMimicsIndex] = spawnMimic;
 
-    size_t spawnRoll = Random::RandomInt(MimicData::CASTE_MOOK, MimicData::CASTE_VARIABLE);
+    int maxSpawnableClade = MimicData::CLADE_VARIABLE;
+    if (usingMaxSpawnableClade)
+        while (gameProgress < MimicData::progressToEncounterClade[maxSpawnableClade])
+            maxSpawnableClade--; // Repeatedly adjust downward to a suitable level.
+    size_t cladeRoll = Random::RandomInt(MimicData::CLADE_MOOK, maxSpawnableClade);
 
-    spawnMimic->Initialize(spawnRoll);
+    spawnMimic->Initialize(cladeRoll);
     if (spawnMimic->isRedirector)
     {
         std::vector<size_t> redirectableCells;
@@ -205,7 +204,7 @@ void WorldModel::SpawnMimic()
         }
         else
         {
-            spawnMimic->Initialize(MimicData::CASTE_MOOK);
+            spawnMimic->Initialize(MimicData::CLADE_MOOK);
         }
     }
 
@@ -247,16 +246,15 @@ void WorldModel::SpawnMimic_Splitters(int origin_col, int origin_row)
 
     for (size_t i = 0; i < adjacentCells.size(); i++)
     {
-        if(mimicGrid[adjacentCells[i]]) // Already occupied, bud.
+        if (mimicGrid[adjacentCells[i]]) // Already occupied, bud.
             continue;
 
         if (Random::RandomInt(1, 4) != 4)
             continue;
 
         Mimic *splitter = new Mimic();
-        splitter->Initialize(MimicData::CASTE_SPLITTER);
+        splitter->Initialize(MimicData::CLADE_SPLITTER);
         mimicGrid[adjacentCells[i]] = splitter;
-
 
         int spawnCol = adjacentCells[i] % Field::GRID_COLS;
         int spawnRow = adjacentCells[i] / Field::GRID_COLS;
@@ -290,17 +288,17 @@ void WorldModel::SpawnExplosionRadiation(float origin_x, float origin_y)
 }
 void WorldModel::SpawnStunLightning(float origin_x, float origin_y)
 {
-    int numSparks = Random::RandomInt(1,5);
-    for(int i = 0; i < numSparks; i++)
+    int numSparks = Random::RandomInt(1, 5);
+    for (int i = 0; i < numSparks; i++)
     {
-        StunLightning* spark = new StunLightning();
+        StunLightning *spark = new StunLightning();
         spark->Initialize(origin_x, origin_y);
         stunLightnings.push_back(spark);
     }
 }
 void WorldModel::InitiateAttackCell(size_t cell_index)
 {
-    if( Field::field.isStunned)
+    if (Field::field.isStunned)
         return;
 
     if (Field::field.cellUnderAttack[cell_index])
@@ -336,17 +334,28 @@ void WorldModel::CompleteAttackCell(size_t cell_index)
                 SpawnMimic_Splitters(cell_index % Field::GRID_COLS,
                                      cell_index / Field::GRID_ROWS);
             }
-            
-            if( target->isStunner)
+
+            if (target->isStunner)
             {
                 Field::field.Stun();
                 SpawnStunLightning(target->xPosition, target->yPosition);
+                Misplay();
             }
             target->isCaptured = true;
         }
     }
     else
-        Field::field.contamination += Field::field.contaminationPerMisplay;
+        Misplay();
+}
+void WorldModel::AddCapture(size_t which_clade)
+{
+    mimicsCaptured[which_clade]++;
+    gameProgress++;
+}
+
+void WorldModel::Misplay()
+{
+    Field::field.contamination += Field::field.contaminationPerMisplay;
 }
 
 void WorldModel::UpdateRedirectionArray()

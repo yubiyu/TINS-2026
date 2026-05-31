@@ -54,6 +54,12 @@ void WorldView::InputKeyboard()
     if (Keyboard::Pressed(ALLEGRO_KEY_ESCAPE))
         UIState::exit = true;
 
+    if(Keyboard::Pressed(ALLEGRO_KEY_PAD_0))
+    {
+        WorldModel::world.Reset();
+        return;
+    }
+
     for (int keypadCheck = ALLEGRO_KEY_PAD_1; keypadCheck <= ALLEGRO_KEY_PAD_9; keypadCheck++)
     {
         if (Field::field.attackCD_current == 0 && Keyboard::Pressed(keypadCheck))
@@ -175,10 +181,10 @@ void WorldView::DrawPhaseImages()
 {
     for (const auto &phaseImage : WorldModel::world.phaseImages)
     {
-        size_t drawCaste = phaseImage->caste;
+        size_t drawClade = phaseImage->clade;
         float drawX = phaseImage->location.current.x - MimicData::SPRITE_WIDTH / 2;
         float drawY = phaseImage->location.current.y - MimicData::SPRITE_HEIGHT / 2;
-        al_draw_bitmap(Image::mimicAtlas_phasingMimics[drawCaste], drawX, drawY, 0);
+        al_draw_bitmap(Image::mimicAtlas_phasingMimics[drawClade], drawX, drawY, 0);
     }
 }
 void WorldView::DrawMimics()
@@ -193,7 +199,7 @@ void WorldView::DrawMimics()
         if (mimic->inPhasing)
             continue;
 
-        size_t mimicCaste = mimic->caste;
+        size_t mimicClade = mimic->clade;
 
         /*
         if (Field::field.cellUnderAttack[i])
@@ -206,7 +212,7 @@ void WorldView::DrawMimics()
             al_set_target_bitmap(maskBuffer);
             al_draw_bitmap(Image::captureAtlas_mask[capturerFrame], 0, 0, 0);
             al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_ZERO);
-            al_draw_bitmap(Image::mimicAtlas_mimics[mimicCaste],
+            al_draw_bitmap(Image::mimicAtlas_mimics[mimicClade],
                            FieldData::CELL_WIDTH / 2 - MimicData::SPRITE_WIDTH / 2,
                            FieldData::CELL_HEIGHT / 2 - MimicData::SPRITE_HEIGHT / 2,
                            0);
@@ -221,9 +227,9 @@ void WorldView::DrawMimics()
         float mimicDrawX = mimic->xPosition - MimicData::SPRITE_WIDTH / 2;
         float mimicDrawY = mimic->yPosition - MimicData::SPRITE_HEIGHT / 2;
         if (mimic->inFrameB)
-            al_draw_bitmap(Image::mimicAtlas_mimicsB[mimicCaste], mimicDrawX, mimicDrawY, 0);
+            al_draw_bitmap(Image::mimicAtlas_mimicsB[mimicClade], mimicDrawX, mimicDrawY, 0);
         else
-            al_draw_bitmap(Image::mimicAtlas_mimicsA[mimicCaste], mimicDrawX, mimicDrawY, 0);
+            al_draw_bitmap(Image::mimicAtlas_mimicsA[mimicClade], mimicDrawX, mimicDrawY, 0);
 
         size_t pupilIndex = mimic->pupilSpriteIndex;
         float pupilDrawX = mimicDrawX + mimic->pupilXDisplacement;

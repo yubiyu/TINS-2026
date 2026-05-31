@@ -12,10 +12,11 @@ class WorldModel
 {
 public:
 
-    std::array<Mimic*, Field::GRID_CELLS> mimicGrid {};
-    std::array<int, MimicData::NUM_CASTES> mimicsCaptured {};
+    int gameProgress {};
+    bool usingMaxSpawnableClade {};
 
-    static WorldModel world; // Shared world instance.
+    std::array<Mimic*, Field::GRID_CELLS> mimicGrid {};
+    std::array<int, MimicData::NUM_CLADES> mimicsCaptured {};
 
     std::array<size_t, Field::GRID_CELLS>redirectionArray {};
 
@@ -23,12 +24,14 @@ public:
     std::vector<Radiation*>radiations;
     std::vector<StunLightning*>stunLightnings;
 
+
+    static WorldModel world; // Shared world instance.
+
     void Initialize();
     void Uninitialize();
     void Reset();
 
     void Update();
-    void DeleteInactives();
     
     void SpawnMimic();
     void SpawnMimic_Splitters(int origin_col, int origin_row);
@@ -37,6 +40,8 @@ public:
 
     void InitiateAttackCell(size_t cell_index);
     void CompleteAttackCell(size_t cell_index);
+    void AddCapture(size_t which_clade);
+    void Misplay();
 
     void UpdateRedirectionArray();
     void SetDefaultRedirectionArray();

@@ -6,56 +6,56 @@
 #include "core_random.h"
 #include "core_timer.h"
 
-void Mimic::Initialize(int set_caste)
+void Mimic::Initialize(int set_clade)
 {
     detonationCD = MimicData::TICKS_TO_DETONATION;
 
     phasingTicks = MimicData::PHASING_TIME;
 
-    caste = set_caste;
-    switch (caste)
+    clade = set_clade;
+    switch (clade)
     {
-    case MimicData::CASTE_MOOK:
+    case MimicData::CLADE_MOOK:
         break;
 
-    case MimicData::CASTE_CRAB:
+    case MimicData::CLADE_CRAB:
         health = 2;
         shieldRotation = Random::RandomReal(0.0, ALLEGRO_PI);
         shieldRotationRate = (ALLEGRO_PI / Timer::FPS) * 0.5;
         shieldRotatesCCW = Random::FlipCoin();
         break;
 
-    case MimicData::CASTE_REDIRECTOR:
+    case MimicData::CLADE_REDIRECTOR:
         isRedirector = true;
         break;
 
-    case MimicData::CASTE_SPLITTER:
+    case MimicData::CLADE_SPLITTER:
         isSplitter = true;
         break;
 
-    case MimicData::CASTE_STUNNER:
+    case MimicData::CLADE_STUNNER:
         isStunner = true;
         pupilShape = MimicData::PUPIL_X;
         break;
 
-    case MimicData::CASTE_VARIABLE:
+    case MimicData::CLADE_VARIABLE:
     {
-        int copyRoll = Random::RandomInt(MimicData::CASTE_CRAB, MimicData::CASTE_STUNNER);
+        int copyRoll = Random::RandomInt(MimicData::CLADE_CRAB, MimicData::CLADE_STUNNER);
         switch (copyRoll)
         {
-        case MimicData::CASTE_CRAB:
+        case MimicData::CLADE_CRAB:
             health = 2;
             shieldRotation = Random::RandomReal(0.0, ALLEGRO_PI);
             shieldRotationRate = (ALLEGRO_PI / Timer::FPS) * 0.5;
             shieldRotatesCCW = Random::FlipCoin();
             break;
-        case MimicData::CASTE_REDIRECTOR:
+        case MimicData::CLADE_REDIRECTOR:
             isRedirector = true;
             break;
-        case MimicData::CASTE_SPLITTER:
+        case MimicData::CLADE_SPLITTER:
             isSplitter = true;
             break;
-        case MimicData::CASTE_STUNNER:
+        case MimicData::CLADE_STUNNER:
             isStunner = true;
             pupilShape = MimicData::PUPIL_X;
             break;

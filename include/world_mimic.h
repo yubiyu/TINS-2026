@@ -4,7 +4,7 @@
 
 struct Mimic
 {
-    int caste {};
+    int clade {};
 
     bool isCaptured {};
     int detonationCD {};
@@ -45,7 +45,7 @@ struct Mimic
     float shieldRotationRate {};
     bool shieldRotatesCCW {};
 
-    void Initialize(int set_caste);
+    void Initialize(int set_clade);
 
     void Update();
 

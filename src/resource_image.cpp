@@ -80,7 +80,7 @@ void Image::LoadResources()
     dialogRectPng = al_load_bitmap("dialogRect.png");
 
     mimicAtlasPng = al_load_bitmap("mimicAtlas.png");
-    for (size_t i = 0; i < MimicData::NUM_CASTES; i++)
+    for (size_t i = 0; i < MimicData::NUM_CLADES; i++)
     {
         mimicAtlas_mimicsA.push_back(al_create_sub_bitmap(mimicAtlasPng, MimicData::SPRITE_WIDTH * i, MimicData::SPRITE_HEIGHT * 0, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
         mimicAtlas_mimicsB.push_back(al_create_sub_bitmap(mimicAtlasPng, MimicData::SPRITE_WIDTH * i, MimicData::SPRITE_HEIGHT * 1, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));

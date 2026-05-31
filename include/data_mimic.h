@@ -9,16 +9,18 @@ struct MimicData
 {
     static void Install();
 
-    enum enumMimicCaste : size_t
+    enum enumMimicClade : size_t
     {
-        CASTE_MOOK,
-        CASTE_CRAB,
-        CASTE_REDIRECTOR,
-        CASTE_SPLITTER,
-        CASTE_STUNNER,
-        CASTE_VARIABLE
+        CLADE_MOOK,
+        CLADE_CRAB,
+        CLADE_REDIRECTOR,
+        CLADE_SPLITTER,
+        CLADE_STUNNER,
+        CLADE_VARIABLE
     };
-    static const size_t NUM_CASTES = CASTE_VARIABLE + 1;
+    static const size_t NUM_CLADES = CLADE_VARIABLE + 1;
+
+    static std::array<int, NUM_CLADES> progressToEncounterClade;
 
     enum enumPupilShapes : size_t
     {
