@@ -34,6 +34,10 @@ ALLEGRO_BITMAP *Image::captureAtlasPng;
 std::vector<ALLEGRO_BITMAP *> Image::captureAtlas;
 std::vector<ALLEGRO_BITMAP *> Image::captureAtlas_mask;
 
+ALLEGRO_BITMAP *Image::radiationSmallPng;
+ALLEGRO_BITMAP *Image::radiationLargePng;
+std::vector<ALLEGRO_BITMAP*> Image::radiationAtlas;
+
 void Image::Initialize()
 {
     al_init_image_addon();
@@ -77,10 +81,7 @@ void Image::LoadResources()
 
     pupilAtlasPng = al_load_bitmap("pupilAtlas.png");
     for (size_t i = 0; i < MimicData::NUM_PUPIL_SHAPES; i++)
-    {
         pupilAtlas.push_back( al_create_sub_bitmap(pupilAtlasPng, MimicData::SPRITE_WIDTH * i, 0, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
-    }
-
 
     captureAtlasPng = al_load_bitmap("captureAtlas.png");
     for (size_t i = 0; i < FieldData::CAPTURE_ANIMATION_NUM_FRAMES; i++)
@@ -88,6 +89,13 @@ void Image::LoadResources()
         captureAtlas.push_back(al_create_sub_bitmap(captureAtlasPng, FieldData::CELL_WIDTH * i, FieldData::CELL_HEIGHT * 0, FieldData::CELL_WIDTH, FieldData::CELL_HEIGHT));
         captureAtlas_mask.push_back(al_create_sub_bitmap(captureAtlasPng, FieldData::CELL_WIDTH * i, FieldData::CELL_HEIGHT * 1, FieldData::CELL_WIDTH, FieldData::CELL_HEIGHT));
     }
+
+    radiationSmallPng = al_load_bitmap("radiationSmall.png");
+    radiationLargePng = al_load_bitmap("radiationLarge.png");
+    for(size_t i = 0; i < 2; i++)
+        radiationAtlas.push_back(al_create_sub_bitmap(radiationSmallPng, i*3, 0, 3, 3));
+    for(size_t i = 0; i < 2; i++)
+        radiationAtlas.push_back(al_create_sub_bitmap(radiationLargePng, i*4, 0, 4, 4));
 }
 
 void Image::UnloadResources()
@@ -125,4 +133,11 @@ void Image::UnloadResources()
     for (ALLEGRO_BITMAP *b : captureAtlas_mask)
         al_destroy_bitmap(b);
     al_destroy_bitmap(captureAtlasPng);
+
+    for (ALLEGRO_BITMAP *b : radiationAtlas)
+        al_destroy_bitmap(b);
+    al_destroy_bitmap(radiationSmallPng);
+    al_destroy_bitmap(radiationLargePng);
+
+
 }

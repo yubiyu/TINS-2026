@@ -41,6 +41,10 @@ WorldView
     static std::vector<ALLEGRO_BITMAP*> captureAtlas;
     static std::vector<ALLEGRO_BITMAP*> captureAtlas_mask;
 
+    static ALLEGRO_BITMAP *radiationSmallPng;
+    static ALLEGRO_BITMAP *radiationLargePng;
+    static std::vector<ALLEGRO_BITMAP*> radiationAtlas;
+
     static void Initialize();
     static void Uninitialize();
 

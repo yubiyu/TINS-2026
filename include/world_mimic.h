@@ -38,6 +38,8 @@ struct Mimic
 
     void Initialize(int set_caste);
 
+    void Update();
+
     void Render();
     void DisplacePupil();
 };

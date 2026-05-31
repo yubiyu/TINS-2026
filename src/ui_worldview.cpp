@@ -84,6 +84,7 @@ void WorldView::UpdateBuffer()
     DrawPhaseImages();
     DrawMimics();
     DrawCapturers();
+    DrawRadiation();
 
     al_set_target_bitmap(previousBitmap);
 }
@@ -100,13 +101,12 @@ void WorldView::DrawGrid()
 
     al_draw_bitmap(Image::polarityButtonPng, Field::field.polarityButtonXPosition, Field::field.polarityButtonYPosition, 0);
     al_draw_bitmap(Image::polarityButtonFramePng, Field::field.polarityButtonFrameXPosition, Field::field.polarityButtonFrameYPosition, 0);
-    
-    al_draw_bitmap_region(Image::tachyonBarPng,
-        0, 0,
-        Field::field.tachyonBarCurrentWidth, Field::field.tachyonBarHeight,
-        Field::field.tachyonBarXPosition, Field::field.tachyonBarYPosition,
-        0);
 
+    al_draw_bitmap_region(Image::tachyonBarPng,
+                          0, 0,
+                          Field::field.tachyonBarCurrentWidth, Field::field.tachyonBarHeight,
+                          Field::field.tachyonBarXPosition, Field::field.tachyonBarYPosition,
+                          0);
 
     al_draw_bitmap(Image::tachyonBarFramePng, Field::field.tachyonBarXPosition, Field::field.tachyonBarYPosition, 0);
 }
@@ -140,11 +140,11 @@ void WorldView::DrawCounters()
 }
 void WorldView::DrawPhaseImages()
 {
-    for(const auto& phaseImage : WorldModel::world.phaseImages)
+    for (const auto &phaseImage : WorldModel::world.phaseImages)
     {
         size_t drawCaste = phaseImage->caste;
-        float drawX = phaseImage->location.current.x - MimicData::SPRITE_WIDTH/2;
-        float drawY = phaseImage->location.current.y - MimicData::SPRITE_HEIGHT/2;
+        float drawX = phaseImage->location.current.x - MimicData::SPRITE_WIDTH / 2;
+        float drawY = phaseImage->location.current.y - MimicData::SPRITE_HEIGHT / 2;
         al_draw_bitmap(Image::mimicAtlas_phasingMimics[drawCaste], drawX, drawY, 0);
     }
 }
@@ -185,18 +185,18 @@ void WorldView::DrawMimics()
         else
         {
         */
-            float mimicDrawX = mimic->xPosition - MimicData::SPRITE_WIDTH / 2;
-            float mimicDrawY = mimic->yPosition - MimicData::SPRITE_HEIGHT / 2;
-            if(mimic->inFrameB)
-                al_draw_bitmap(Image::mimicAtlas_mimicsB[mimicCaste], mimicDrawX, mimicDrawY, 0);
-            else
-                al_draw_bitmap(Image::mimicAtlas_mimicsA[mimicCaste], mimicDrawX, mimicDrawY, 0);
+        float mimicDrawX = mimic->xPosition - MimicData::SPRITE_WIDTH / 2;
+        float mimicDrawY = mimic->yPosition - MimicData::SPRITE_HEIGHT / 2;
+        if (mimic->inFrameB)
+            al_draw_bitmap(Image::mimicAtlas_mimicsB[mimicCaste], mimicDrawX, mimicDrawY, 0);
+        else
+            al_draw_bitmap(Image::mimicAtlas_mimicsA[mimicCaste], mimicDrawX, mimicDrawY, 0);
 
-            size_t pupilIndex = mimic->pupilShape;
-            float pupilDrawX = mimicDrawX  + mimic->pupilXDisplacement;
-            float pupilDrawY = mimicDrawY + mimic->pupilYDisplacement;
+        size_t pupilIndex = mimic->pupilShape;
+        float pupilDrawX = mimicDrawX + mimic->pupilXDisplacement;
+        float pupilDrawY = mimicDrawY + mimic->pupilYDisplacement;
 
-            al_draw_bitmap(Image::pupilAtlas[pupilIndex], pupilDrawX, pupilDrawY, 0);
+        al_draw_bitmap(Image::pupilAtlas[pupilIndex], pupilDrawX, pupilDrawY, 0);
         //}
     }
 }
@@ -212,5 +212,23 @@ void WorldView::DrawCapturers()
         size_t drawCapturerFrame = Field::field.capturerFrame[i];
 
         al_draw_bitmap(Image::captureAtlas[drawCapturerFrame], drawX, drawY, 0);
+    }
+}
+void WorldView::DrawRadiation()
+{
+    for (size_t i = 0; i < WorldModel::world.radiation.size(); i++)
+    {
+        Radiation* rad = WorldModel::world.radiation[i];
+
+        size_t drawIndex = 2*rad->largeParticle + rad->blackPolarity;
+        float drawX = rad->xPosition;
+        float drawY = rad->yPosition;
+        float drawCenter = rad->radius;
+        float drawSpin = 0.0;
+
+        al_draw_rotated_bitmap(Image::radiationAtlas[drawIndex],
+                               drawCenter, drawCenter,
+                               drawX, drawY,
+                               drawSpin, 0);
     }
 }

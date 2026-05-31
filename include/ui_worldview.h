@@ -33,4 +33,5 @@ public:
     void DrawPhaseImages();
     void DrawMimics();
     void DrawCapturers();
+    void DrawRadiation();
 };

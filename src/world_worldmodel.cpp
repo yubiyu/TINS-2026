@@ -19,6 +19,21 @@ void WorldModel::Initialize()
 
 void WorldModel::Uninitialize()
 {
+    for(size_t i = 0; i < mimicGrid.size(); i++)
+    {
+        if(mimicGrid[i])
+            delete mimicGrid[i];
+        
+        mimicGrid[i] = nullptr;
+    }
+
+    for (auto *p : phaseImages)
+        delete p;
+    phaseImages.clear();
+
+    for (auto *r : radiation)
+        delete r;
+    radiation.clear();
 }
 
 void WorldModel::Reset()
@@ -34,20 +49,17 @@ void WorldModel::Update()
 {
     Field::field.contamination += Field::field.contaminationDoT;
 
-    if(Field::field.contaminationDoT > 0.0)
-       Field::field.contaminationDoT -= Field::field.contaminationDoTAttenuation;
-    if(Field::field.contaminationDoT < 0.0)
+    if (Field::field.contaminationDoT > 0.0)
+        Field::field.contaminationDoT -= Field::field.contaminationDoTAttenuation;
+    if (Field::field.contaminationDoT < 0.0)
         Field::field.contaminationDoT = 0.0;
 
-
-    if(Field::field.contamination > 0.0)
+    if (Field::field.contamination > 0.0)
         Field::field.contamination -= Field::field.contaminationCleanupRate;
-    if(Field::field.contamination < 0)
+    if (Field::field.contamination < 0)
         Field::field.contamination = 0.0;
 
-    
     Field::field.UpdateContaminationBar();
-
 
     if (Field::field.attackCD_current > 0)
         Field::field.attackCD_current--;
@@ -63,47 +75,24 @@ void WorldModel::Update()
 
     for (size_t i = 0; i < Field::GRID_CELLS; i++)
     {
-        Mimic* occupantMimic = mimicGrid[i];
-        if(occupantMimic)
+        Mimic *occupantMimic = mimicGrid[i];
+        if (occupantMimic)
         {
-            occupantMimic->detonationCD --;
-            if(occupantMimic->detonationCD <= 0 && !occupantMimic->isCaptured)
-                occupantMimic->isExploding = true;
+            occupantMimic->Update();
 
-
-            if(occupantMimic->inPhasing)
-            {
-                occupantMimic->phasingTicks --;
-                if(occupantMimic->phasingTicks <= 0)
-                    occupantMimic->inPhasing = false;
-            }
-
-            occupantMimic->frameChangeTicks_current ++;
-            if(occupantMimic->frameChangeTicks_current >= occupantMimic->frameChangeTicks_needed)
-            {
-                occupantMimic->frameChangeTicks_current = 0;
-                occupantMimic->inFrameB = !occupantMimic->inFrameB;
-            }
-
-            occupantMimic->pupilChangeTicks_current ++;
-            if(occupantMimic->pupilChangeTicks_current >= occupantMimic->pupilChangeTicks_needed)
-            {
-                occupantMimic->pupilChangeTicks_current = 0;
-                occupantMimic->DisplacePupil();
-            }
-
-            if(occupantMimic->isCaptured)
+            if (occupantMimic->isCaptured)
             {
                 mimicsCaptured[occupantMimic->caste]++;
                 delete occupantMimic;
                 mimicGrid[i] = nullptr;
             }
-            else if(occupantMimic->isExploding)
+            else if (occupantMimic->isExploding)
             {
                 delete occupantMimic;
                 mimicGrid[i] = nullptr;
                 Field::field.contamination += Field::field.contaminationPerLeak;
                 Field::field.contaminationDoT += Field::field.contaminationDoTPerLeak;
+                SpawnExplosionRadiation(occupantMimic->xPosition, occupantMimic->yPosition);
             }
         }
 
@@ -128,8 +117,7 @@ void WorldModel::Update()
         if (phaseImage->location.atDestination)
             phaseImage->active = false;
     }
-
-    auto it = std::remove_if(
+    auto phase_it = std::remove_if(
         phaseImages.begin(),
         phaseImages.end(),
         [](PhaseImage *phaseImage)
@@ -141,8 +129,23 @@ void WorldModel::Update()
             }
             return false;
         });
+    phaseImages.erase(phase_it, phaseImages.end());
 
-    phaseImages.erase(it, phaseImages.end());
+    for (const auto &rad : radiation)
+        rad->Update();
+    auto rad_it = std::remove_if(
+        radiation.begin(),
+        radiation.end(),
+        [](Radiation *rad)
+        {
+            if (!rad->isAlive)
+            {
+                delete rad;
+                return true;
+            }
+            return false;
+        });
+    radiation.erase(rad_it, radiation.end());
 }
 
 void WorldModel::SpawnMimic()
@@ -176,16 +179,24 @@ void WorldModel::SpawnMimic()
 
     PhaseImage *leftPhase = new PhaseImage();
     leftPhase->Initialize(spawnMimic->xPosition - MimicData::PHASING_DISTANCE, spawnMimic->yPosition,
-        spawnMimic->xPosition, spawnMimic->yPosition);
-    
+                          spawnMimic->xPosition, spawnMimic->yPosition);
+
     PhaseImage *rightPhase = new PhaseImage();
     rightPhase->Initialize(spawnMimic->xPosition + MimicData::PHASING_DISTANCE, spawnMimic->yPosition,
-        spawnMimic->xPosition, spawnMimic->yPosition);
+                           spawnMimic->xPosition, spawnMimic->yPosition);
 
     phaseImages.push_back(leftPhase);
     phaseImages.push_back(rightPhase);
 }
-
+void WorldModel::SpawnExplosionRadiation(float origin_x, float origin_y)
+{
+    for (int i = 0; i < 100; i++)
+    {
+        Radiation *rad = new Radiation();
+        rad->Initialize(origin_x, origin_y);
+        radiation.push_back(rad);
+    }
+}
 void WorldModel::InitiateAttackCell(size_t cell_index)
 {
     if (Field::field.cellUnderAttack[cell_index])
@@ -201,23 +212,13 @@ void WorldModel::InitiateAttackCell(size_t cell_index)
 
 void WorldModel::CompleteAttackCell(size_t cell_index)
 {
-    std::cout << "Attack cell " << cell_index << std::endl;
-
     Mimic *target = mimicGrid[cell_index];
     if (target && !target->inPhasing)
     {
         target->health--;
         if (target->health <= 0)
-        {
             target->isCaptured = true;
-        }
-        else
-        {
-        }
     }
     else
-    {
         Field::field.contamination += Field::field.contaminationPerMisplay;
-    }
-
 }
