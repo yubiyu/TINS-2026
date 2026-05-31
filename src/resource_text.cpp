@@ -9,6 +9,7 @@ ALLEGRO_FONT *Text::defaultFont;
 
 ALLEGRO_FONT *Text::fieldTitleFont;
 ALLEGRO_FONT *Text::fieldCounterFont;
+ALLEGRO_FONT *Text::fieldDialogFont;
 
 void Text::Initialize()
 {
@@ -33,7 +34,7 @@ void Text::LoadResources()
 
     fieldTitleFont = al_load_ttf_font("PublicPixel.ttf", FIELD_TITLE_FONT_HEIGHT, 0);
     fieldCounterFont = al_load_ttf_font("PublicPixel.ttf", FIELD_COUNTER_FONT_HEIGHT, 0);
-
+    fieldDialogFont = al_load_ttf_font("PublicPixel.ttf", FIELD_DIALOG_FONT_HEIGHT, 0);
 }
 
 void Text::UnloadResources()

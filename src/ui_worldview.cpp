@@ -230,6 +230,14 @@ void WorldView::DrawMimics()
         float pupilDrawY = mimicDrawY + mimic->pupilYDisplacement;
 
         al_draw_bitmap(Image::pupilAtlas[pupilIndex], pupilDrawX, pupilDrawY, 0);
+
+        if(mimic->health > 1)
+        {
+            al_draw_scaled_rotated_bitmap(Image::bubblePng,
+                MimicData::SPRITE_WIDTH/2, MimicData::SPRITE_HEIGHT/2,
+                
+            );
+        }
         //}
     }
 }
@@ -280,8 +288,51 @@ void WorldView::DrawRadiation()
 void WorldView::DrawDialog()
 {
     if (Field::field.isStunned)
+    {
         al_draw_bitmap(Image::dialogRectPng,
-                       Display::width / 2 - FieldData::DIALOG_WIDTH/2 + Field::field.dialogFrameDisplacement.x,
-                       Display::height / 2 - FieldData::DIALOG_HEIGHT/2 + Field::field.dialogFrameDisplacement.y,
+                       Field::field.dialogFrameXY.x + Field::field.dialogFrameDisplacement.x - FieldData::DIALOG_WIDTH/2,
+                       Field::field.dialogFrameXY.y + Field::field.dialogFrameDisplacement.y - FieldData::DIALOG_HEIGHT/2,
                        0);
+
+        TextUtil::al_draw_string(Text::fieldDialogFont, Palette::colours[Palette::COL_WHITE],
+                                 Field::field.dialogErrorXY.x + Field::field.dialogErrorDisplacement.x,
+                                 Field::field.dialogErrorXY.y + Field::field.dialogErrorDisplacement.y - Text::FIELD_DIALOG_FONT_HEIGHT / 2 - 4, // Backdrop,
+                                 ALLEGRO_ALIGN_CENTER, FieldData::dialog_error);
+        TextUtil::al_draw_string(Text::fieldDialogFont, Palette::colours[Palette::COL_BLACK],
+                                 Field::field.dialogErrorXY.x + Field::field.dialogErrorDisplacement.x,
+                                 Field::field.dialogErrorXY.y + Field::field.dialogErrorDisplacement.y - Text::FIELD_DIALOG_FONT_HEIGHT / 2,
+                                 ALLEGRO_ALIGN_CENTER, FieldData::dialog_error);
+
+        TextUtil::al_draw_string(Text::fieldDialogFont, Palette::colours[Palette::COL_WHITE],
+                                 Field::field.dialogGravimetricInterferenceXY.x + Field::field.dialogGravimetricInterferenceDisplacement.x,
+                                 Field::field.dialogGravimetricInterferenceXY.y + Field::field.dialogGravimetricInterferenceDisplacement.y - Text::FIELD_DIALOG_FONT_HEIGHT / 2 - 4, // Backdrop
+                                 ALLEGRO_ALIGN_CENTER, FieldData::dialog_gravimetric_interference);
+        TextUtil::al_draw_string(Text::fieldDialogFont, Palette::colours[Palette::COL_BLACK],
+                                 Field::field.dialogGravimetricInterferenceXY.x + Field::field.dialogGravimetricInterferenceDisplacement.x,
+                                 Field::field.dialogGravimetricInterferenceXY.y + Field::field.dialogGravimetricInterferenceDisplacement.y - Text::FIELD_DIALOG_FONT_HEIGHT / 2,
+                                 ALLEGRO_ALIGN_CENTER, FieldData::dialog_gravimetric_interference);
+
+        float recalibrationBarMaxWidth = 576;
+        float stunRecoveryPercent =  static_cast<float>(Field::field.stunRecovery_current)/Field::field.stunRecovery_Max; 
+        float recalibrationBarCurrentWidth = recalibrationBarMaxWidth * stunRecoveryPercent;
+
+        float x1Outline = Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x - recalibrationBarMaxWidth/2;
+        float x1Fill = Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x - recalibrationBarCurrentWidth/2;
+        float y1 = Field::field.dialogRecalibratingXY.y + Field::field.dialogRecalibratingDisplacement.y - Text::FIELD_DIALOG_FONT_HEIGHT / 2 - 4;
+        float x2Outline = Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x + recalibrationBarMaxWidth/2;
+        float x2Fill = Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x + recalibrationBarCurrentWidth/2;
+        float y2 = Field::field.dialogRecalibratingXY.y + Field::field.dialogRecalibratingDisplacement.y + 20;
+
+        al_draw_filled_rectangle(x1Fill, y1, x2Fill, y2, Palette::colours[Palette::COL_LIGHT]);
+        DrawingUtil::al_draw_inbounds_rectangle(x1Outline, y1, x2Outline, y2, Palette::colours[Palette::COL_DARK], 4.0);
+
+        TextUtil::al_draw_string(Text::fieldDialogFont, Palette::colours[Palette::COL_WHITE],
+                                 Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x,
+                                 Field::field.dialogRecalibratingXY.y + Field::field.dialogRecalibratingDisplacement.y - Text::FIELD_DIALOG_FONT_HEIGHT / 2 - 4, // Backdrop
+                                 ALLEGRO_ALIGN_CENTER, FieldData::dialog_recalibrating);
+        TextUtil::al_draw_string(Text::fieldDialogFont, Palette::colours[Palette::COL_BLACK],
+                                 Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x,
+                                 Field::field.dialogRecalibratingXY.y + Field::field.dialogRecalibratingDisplacement.y - Text::FIELD_DIALOG_FONT_HEIGHT / 2,
+                                 ALLEGRO_ALIGN_CENTER, FieldData::dialog_recalibrating);
+    }
 }

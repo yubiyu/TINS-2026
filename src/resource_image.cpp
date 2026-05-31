@@ -32,6 +32,8 @@ std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_unknownMimics;
 ALLEGRO_BITMAP *Image::pupilAtlasPng;
 std::vector<ALLEGRO_BITMAP *> Image::pupilAtlas;
 
+ALLEGRO_BITMAP *Image::bubblePng;
+
 ALLEGRO_BITMAP *Image::captureAtlasPng;
 std::vector<ALLEGRO_BITMAP *> Image::captureAtlas;
 std::vector<ALLEGRO_BITMAP *> Image::captureAtlas_mask;
@@ -91,6 +93,8 @@ void Image::LoadResources()
         for(size_t x = 0; x < MimicData::NUM_PUPIL_VARIANTS; x++)
             pupilAtlas.push_back( al_create_sub_bitmap(pupilAtlasPng, x*MimicData::SPRITE_WIDTH, y*MimicData::SPRITE_HEIGHT, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
 
+    bubblePng = al_load_bitmap("bubble.png");
+
     captureAtlasPng = al_load_bitmap("captureAtlas.png");
     for (size_t i = 0; i < FieldData::CAPTURE_ANIMATION_NUM_FRAMES; i++)
     {
@@ -141,6 +145,8 @@ void Image::UnloadResources()
     for (ALLEGRO_BITMAP *b : pupilAtlas)
         al_destroy_bitmap(b);
     al_destroy_bitmap(pupilAtlasPng);
+
+    al_destroy_bitmap(bubblePng);
 
     for (ALLEGRO_BITMAP *b : captureAtlas)
         al_destroy_bitmap(b);

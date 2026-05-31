@@ -13,9 +13,9 @@ struct FieldData
     static const int DIALOG_WIDTH = 768;
     static const int DIALOG_HEIGHT = 320;
 
-    std::string dialog_error = "ERROR";
-    std::string dialog_gravimetric_interference = "Gravimetric interference!";
-    std::string dialog_recalibrating = "Recalibrating"; // Add ellipses.
+    static const inline std::string dialog_error = "ERROR";
+    static const inline std::string dialog_gravimetric_interference = "Gravimetric interference!";
+    static const inline std::string dialog_recalibrating = "[ Recalibrating ]";
 
     
 

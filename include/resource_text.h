@@ -15,10 +15,12 @@ struct Text
 
     static ALLEGRO_FONT *fieldTitleFont;
     static ALLEGRO_FONT *fieldCounterFont;
+    static ALLEGRO_FONT *fieldDialogFont;
 
     static const int DEFAULT_FONT_HEIGHT = Tile::HEIGHT;
     static const int FIELD_TITLE_FONT_HEIGHT = Tile::HEIGHT*2;
     static const int FIELD_COUNTER_FONT_HEIGHT = Tile::HEIGHT*2;
+    static const int FIELD_DIALOG_FONT_HEIGHT = Tile::HEIGHT*2;
 
     static const char colorMarkupOpen = '['; // Markup is parsed for in blocks such "[b]" for black, or "[w]" for white.
     static const char colorMarkupClose = ']';

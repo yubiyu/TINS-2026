@@ -39,6 +39,8 @@ WorldView
     static ALLEGRO_BITMAP *pupilAtlasPng;
     static std::vector<ALLEGRO_BITMAP*> pupilAtlas;
 
+    static ALLEGRO_BITMAP *bubblePng;
+
     static ALLEGRO_BITMAP *captureAtlasPng;
     static std::vector<ALLEGRO_BITMAP*> captureAtlas;
     static std::vector<ALLEGRO_BITMAP*> captureAtlas_mask;

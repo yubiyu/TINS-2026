@@ -90,6 +90,13 @@ struct Field
     Point2Df cellXYPosition[GRID_CELLS] {};
 
 
+    // Centered coords.
+    Point2D dialogFrameXY {};
+    Point2D dialogErrorXY {};
+    Point2D dialogGravimetricInterferenceXY {};
+    Point2D dialogRecalibratingXY {};
+
+
     int dialogDisplacementTicks_current {};
     int dialogDisplacementTicks_max {};
     Point2D dialogFrameDisplacement {};

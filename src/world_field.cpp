@@ -51,6 +51,16 @@ void Field::Initialize()
     tachyonBarPhaseShift_Max = 32 - 1;
     tachyonBarPhaseShift_Change = (tachyonBarPhaseShift_Max / Timer::FPS) * 1.5;
 
+    // Centered coords.
+    int dialogCX = Display::width/2;
+    int dialogCY = Display::height/2;
+    dialogFrameXY = {dialogCX, dialogCY};
+    dialogErrorXY = {dialogCX, dialogCY - 64};
+    dialogGravimetricInterferenceXY = {dialogCX, dialogCY};
+    dialogRecalibratingXY = {dialogCX, dialogCY + 64};
+
+
+
     dialogDisplacementTicks_max = Timer::FPS * 0.05;
 
     Reset();
@@ -173,10 +183,28 @@ void Field::Stun()
 
 void Field::DisplaceStunDialog()
 {
-    const int displaceMin = -16;
-    const int displaceMax = +16;
+    const int displaceMin = -8;
+    const int displaceMax = +8;
 
     dialogFrameDisplacement =
+    {
+        Random::RandomInt(displaceMin, displaceMax),
+        Random::RandomInt(displaceMin, displaceMax)
+    };
+
+    dialogErrorDisplacement = 
+    {
+        Random::RandomInt(displaceMin, displaceMax),
+        Random::RandomInt(displaceMin, displaceMax)
+    };
+
+    dialogGravimetricInterferenceDisplacement = 
+    {
+        Random::RandomInt(displaceMin, displaceMax),
+        Random::RandomInt(displaceMin, displaceMax)
+    };
+
+    dialogRecalibratingDisplacement = 
     {
         Random::RandomInt(displaceMin, displaceMax),
         Random::RandomInt(displaceMin, displaceMax)
