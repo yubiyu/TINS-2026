@@ -22,9 +22,13 @@ ALLEGRO_BITMAP *Image::tachyonBarPng;
 ALLEGRO_BITMAP *Image::tachyonBarFramePng;
 
 ALLEGRO_BITMAP *Image::mimicAtlasPng;
-std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_mimics;
+std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_mimicsA;
+std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_mimicsB;
 std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_phasingMimics;
 std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_unknownMimics;
+
+ALLEGRO_BITMAP *Image::pupilAtlasPng;
+std::vector<ALLEGRO_BITMAP *> Image::pupilAtlas;
 
 ALLEGRO_BITMAP *Image::captureAtlasPng;
 std::vector<ALLEGRO_BITMAP *> Image::captureAtlas;
@@ -65,10 +69,18 @@ void Image::LoadResources()
     mimicAtlasPng = al_load_bitmap("mimicAtlas.png");
     for (size_t i = 0; i < MimicData::NUM_CASTES; i++)
     {
-        mimicAtlas_mimics.push_back(al_create_sub_bitmap(mimicAtlasPng, MimicData::SPRITE_WIDTH * i, MimicData::SPRITE_HEIGHT * 0, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
-        mimicAtlas_phasingMimics.push_back(al_create_sub_bitmap(mimicAtlasPng, MimicData::SPRITE_WIDTH * i, MimicData::SPRITE_HEIGHT * 1, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
-        mimicAtlas_unknownMimics.push_back(al_create_sub_bitmap(mimicAtlasPng, MimicData::SPRITE_WIDTH * i, MimicData::SPRITE_HEIGHT * 2, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
+        mimicAtlas_mimicsA.push_back(al_create_sub_bitmap(mimicAtlasPng, MimicData::SPRITE_WIDTH * i, MimicData::SPRITE_HEIGHT * 0, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
+        mimicAtlas_mimicsB.push_back(al_create_sub_bitmap(mimicAtlasPng, MimicData::SPRITE_WIDTH * i, MimicData::SPRITE_HEIGHT * 1, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
+        mimicAtlas_phasingMimics.push_back(al_create_sub_bitmap(mimicAtlasPng, MimicData::SPRITE_WIDTH * i, MimicData::SPRITE_HEIGHT * 2, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
+        mimicAtlas_unknownMimics.push_back(al_create_sub_bitmap(mimicAtlasPng, MimicData::SPRITE_WIDTH * i, MimicData::SPRITE_HEIGHT * 3, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
     }
+
+    pupilAtlasPng = al_load_bitmap("pupilAtlas.png");
+    for (size_t i = 0; i < MimicData::NUM_PUPIL_SHAPES; i++)
+    {
+        pupilAtlas.push_back( al_create_sub_bitmap(pupilAtlasPng, MimicData::SPRITE_WIDTH * i, 0, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
+    }
+
 
     captureAtlasPng = al_load_bitmap("captureAtlas.png");
     for (size_t i = 0; i < FieldData::CAPTURE_ANIMATION_NUM_FRAMES; i++)
@@ -94,13 +106,19 @@ void Image::UnloadResources()
     al_destroy_bitmap(tachyonBarPng);
     al_destroy_bitmap(tachyonBarFramePng);
 
-    for (ALLEGRO_BITMAP *b : mimicAtlas_mimics)
+    for (ALLEGRO_BITMAP *b : mimicAtlas_mimicsA)
+        al_destroy_bitmap(b);
+    for (ALLEGRO_BITMAP *b : mimicAtlas_mimicsB)
         al_destroy_bitmap(b);
     for (ALLEGRO_BITMAP *b : mimicAtlas_phasingMimics)
         al_destroy_bitmap(b);
     for (ALLEGRO_BITMAP *b : mimicAtlas_unknownMimics)
         al_destroy_bitmap(b);
     al_destroy_bitmap(mimicAtlasPng);
+
+    for (ALLEGRO_BITMAP *b : pupilAtlas)
+        al_destroy_bitmap(b);
+    al_destroy_bitmap(pupilAtlasPng);
 
     for (ALLEGRO_BITMAP *b : captureAtlas)
         al_destroy_bitmap(b);

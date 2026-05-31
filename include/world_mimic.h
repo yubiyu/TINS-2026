@@ -6,6 +6,10 @@ struct Mimic
 {
     int caste {};
 
+    bool isCaptured {};
+    int detonationCD {};
+    bool isExploding {};
+
     bool inPhasing = true;
     int phasingTicks = 0;
 
@@ -22,7 +26,18 @@ struct Mimic
     float xPosition {}; // Centered coords.
     float yPosition {};
 
+    bool inFrameB {};
+    int frameChangeTicks_needed = 60 * 0.5;
+    int frameChangeTicks_current {};
+
+    int pupilShape {};
+
+    int pupilChangeTicks_needed = 60 * 1.0;
+    int pupilChangeTicks_current {};
+    float pupilXDisplacement {}, pupilYDisplacement {};
+
     void Initialize(int set_caste);
 
     void Render();
+    void DisplacePupil();
 };

@@ -126,7 +126,7 @@ void WorldView::DrawCounters()
             std::string captureCountString = std::to_string(WorldModel::world.mimicsCaptured[mimicIndex]);
 
             if (WorldModel::world.mimicsCaptured[mimicIndex] > 1)
-                al_draw_bitmap(Image::mimicAtlas_mimics[mimicIndex], spriteDrawX, spriteDrawY, 0);
+                al_draw_bitmap(Image::mimicAtlas_mimicsB[mimicIndex], spriteDrawX, spriteDrawY, 0);
             else
                 al_draw_bitmap(Image::mimicAtlas_unknownMimics[mimicIndex], spriteDrawX, spriteDrawY, 0);
 
@@ -187,7 +187,16 @@ void WorldView::DrawMimics()
         */
             float mimicDrawX = mimic->xPosition - MimicData::SPRITE_WIDTH / 2;
             float mimicDrawY = mimic->yPosition - MimicData::SPRITE_HEIGHT / 2;
-            al_draw_bitmap(Image::mimicAtlas_mimics[mimicCaste], mimicDrawX, mimicDrawY, 0);
+            if(mimic->inFrameB)
+                al_draw_bitmap(Image::mimicAtlas_mimicsB[mimicCaste], mimicDrawX, mimicDrawY, 0);
+            else
+                al_draw_bitmap(Image::mimicAtlas_mimicsA[mimicCaste], mimicDrawX, mimicDrawY, 0);
+
+            size_t pupilIndex = mimic->pupilShape;
+            float pupilDrawX = mimicDrawX  + mimic->pupilXDisplacement;
+            float pupilDrawY = mimicDrawY + mimic->pupilYDisplacement;
+
+            al_draw_bitmap(Image::pupilAtlas[pupilIndex], pupilDrawX, pupilDrawY, 0);
         //}
     }
 }

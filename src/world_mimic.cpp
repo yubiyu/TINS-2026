@@ -4,14 +4,17 @@
 
 #include "core_random.h"
 
+
 void Mimic::Initialize(int set_caste)
 {
+    detonationCD = MimicData::TICKS_TO_DETONATION;
+
     phasingTicks = MimicData::PHASING_TIME;
 
     int caste = set_caste;
     switch(caste)
     {
-        case MimicData::CASTE_DRONE:
+        case MimicData::CASTE_MOOK:
         break;
 
         case MimicData::CASTE_ARMOURED:
@@ -35,4 +38,16 @@ void Mimic::Initialize(int set_caste)
         default:
         break;
     }
+
+    DisplacePupil();
+}
+
+void Mimic::DisplacePupil()
+{
+    pupilChangeTicks_needed *= 0.8;
+    if(pupilChangeTicks_needed < 1)
+        pupilChangeTicks_needed = 1;
+
+    pupilXDisplacement = Random::RandomReal(-9, 9);
+    pupilYDisplacement = Random::RandomReal(-5, 5);
 }

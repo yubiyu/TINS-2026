@@ -29,9 +29,13 @@ WorldView
     static ALLEGRO_BITMAP *tachyonBarFramePng;
     
     static ALLEGRO_BITMAP *mimicAtlasPng;
-    static std::vector<ALLEGRO_BITMAP*> mimicAtlas_mimics;
+    static std::vector<ALLEGRO_BITMAP*> mimicAtlas_mimicsA;
+    static std::vector<ALLEGRO_BITMAP*> mimicAtlas_mimicsB;
     static std::vector<ALLEGRO_BITMAP*> mimicAtlas_phasingMimics;
     static std::vector<ALLEGRO_BITMAP*> mimicAtlas_unknownMimics;
+    
+    static ALLEGRO_BITMAP *pupilAtlasPng;
+    static std::vector<ALLEGRO_BITMAP*> pupilAtlas;
 
     static ALLEGRO_BITMAP *captureAtlasPng;
     static std::vector<ALLEGRO_BITMAP*> captureAtlas;

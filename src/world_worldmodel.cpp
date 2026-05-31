@@ -66,14 +66,46 @@ void WorldModel::Update()
         Mimic* occupantMimic = mimicGrid[i];
         if(occupantMimic)
         {
+            occupantMimic->detonationCD --;
+            if(occupantMimic->detonationCD <= 0 && !occupantMimic->isCaptured)
+                occupantMimic->isExploding = true;
+
+
             if(occupantMimic->inPhasing)
             {
                 occupantMimic->phasingTicks --;
                 if(occupantMimic->phasingTicks <= 0)
                     occupantMimic->inPhasing = false;
             }
-        }
 
+            occupantMimic->frameChangeTicks_current ++;
+            if(occupantMimic->frameChangeTicks_current >= occupantMimic->frameChangeTicks_needed)
+            {
+                occupantMimic->frameChangeTicks_current = 0;
+                occupantMimic->inFrameB = !occupantMimic->inFrameB;
+            }
+
+            occupantMimic->pupilChangeTicks_current ++;
+            if(occupantMimic->pupilChangeTicks_current >= occupantMimic->pupilChangeTicks_needed)
+            {
+                occupantMimic->pupilChangeTicks_current = 0;
+                occupantMimic->DisplacePupil();
+            }
+
+            if(occupantMimic->isCaptured)
+            {
+                mimicsCaptured[occupantMimic->caste]++;
+                delete occupantMimic;
+                mimicGrid[i] = nullptr;
+            }
+            else if(occupantMimic->isExploding)
+            {
+                delete occupantMimic;
+                mimicGrid[i] = nullptr;
+                Field::field.contamination += Field::field.contaminationPerLeak;
+                Field::field.contaminationDoT += Field::field.contaminationDoTPerLeak;
+            }
+        }
 
         if (Field::field.cellUnderAttack[i])
         {
@@ -130,7 +162,7 @@ void WorldModel::SpawnMimic()
     size_t spawnRow = gridMimicsIndex / Field::GRID_COLS;
 
     Mimic *spawnMimic = new Mimic();
-    spawnMimic->Initialize(MimicData::CASTE_DRONE);
+    spawnMimic->Initialize(MimicData::CASTE_MOOK);
 
     spawnMimic->xPosition = Field::field.gridXPosition +
                             spawnCol * FieldData::CELL_WIDTH +
@@ -164,7 +196,7 @@ void WorldModel::InitiateAttackCell(size_t cell_index)
     Field::field.cellUnderAttack[cell_index] = true;
     Field::field.cellAttackProgress[cell_index] = 0;
 
-    Field::field.capturerFrame[cell_index] = 0; // Probably not necessary as it gets recalculated in Update().
+    Field::field.capturerFrame[cell_index] = 0;
 }
 
 void WorldModel::CompleteAttackCell(size_t cell_index)
@@ -177,9 +209,7 @@ void WorldModel::CompleteAttackCell(size_t cell_index)
         target->health--;
         if (target->health <= 0)
         {
-            mimicsCaptured[target->caste]++;
-            delete target;
-            mimicGrid[cell_index] = nullptr;
+            target->isCaptured = true;
         }
         else
         {
