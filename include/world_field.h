@@ -21,15 +21,19 @@ struct Field
     float contaminationCleanupRate {};
     float contaminationDoTAttenuation {};
 
+    bool isStunned {};
+    int stunRecovery_current {};
+    int stunRecovery_Max {};
+
     int gridWidth{}, gridHeight{};
     int gridXPosition{}, gridYPosition{};
 
     int gridFrameWidth{}, gridFrameHeight{};
     int gridFrameXPosition{}, gridFrameYPosition{};
 
-    int polarityButtonWidth {}, polarityButtonHeight {};
-    int polarityButtonXPosition{}, polarityButtonYPosition {};
-    int polarityButtonFrameXPosition{}, polarityButtonFrameYPosition{};
+    int revertButtonWidth {}, revertButtonHeight {};
+    int revertButtonXPosition{}, revertButtonYPosition {};
+    int revertButtonFrameXPosition{}, revertButtonFrameYPosition{};
 
     int tachyonBarMaxWidth {}, tachyonBarHeight {};
     float tachyonBarCurrentWidth {};
@@ -95,4 +99,6 @@ struct Field
     int SimultaneousSpawnRNG();
 
     void UpdateContaminationBar();
+
+    void Stun();
 };

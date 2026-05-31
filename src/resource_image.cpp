@@ -15,8 +15,8 @@ ALLEGRO_BITMAP *Image::settingsVolumeBarEmptyPng;
 ALLEGRO_BITMAP *Image::gridFramePng;
 ALLEGRO_BITMAP *Image::gridPng;
 
-ALLEGRO_BITMAP *Image::polarityButtonPng;
-ALLEGRO_BITMAP *Image::polarityButtonFramePng;
+ALLEGRO_BITMAP *Image::revertButtonPng;
+ALLEGRO_BITMAP *Image::revertButtonFramePng;
 
 ALLEGRO_BITMAP *Image::tachyonBarPng;
 ALLEGRO_BITMAP *Image::tachyonBarFramePng;
@@ -37,6 +37,9 @@ std::vector<ALLEGRO_BITMAP *> Image::captureAtlas_mask;
 ALLEGRO_BITMAP *Image::radiationSmallPng;
 ALLEGRO_BITMAP *Image::radiationLargePng;
 std::vector<ALLEGRO_BITMAP*> Image::radiationAtlas;
+
+ALLEGRO_BITMAP *Image::stunLightningAtlasPng;
+std::vector<ALLEGRO_BITMAP*> Image::stunLightningAtlas;
 
 void Image::Initialize()
 {
@@ -64,8 +67,8 @@ void Image::LoadResources()
     gridFramePng = al_load_bitmap("gridFrame.png");
     gridPng = al_load_bitmap("grid.png");
 
-    polarityButtonPng = al_load_bitmap("polarityButton.png");
-    polarityButtonFramePng = al_load_bitmap("polarityButtonFrame.png");
+    revertButtonPng = al_load_bitmap("revertButton.png");
+    revertButtonFramePng = al_load_bitmap("revertButtonFrame.png");
 
     tachyonBarPng = al_load_bitmap("tachyonBar.png");
     tachyonBarFramePng = al_load_bitmap("tachyonBarFrame.png");
@@ -97,6 +100,10 @@ void Image::LoadResources()
         radiationAtlas.push_back(al_create_sub_bitmap(radiationSmallPng, i*3, 0, 3, 3));
     for(size_t i = 0; i < 2; i++)
         radiationAtlas.push_back(al_create_sub_bitmap(radiationLargePng, i*4, 0, 4, 4));
+
+    stunLightningAtlasPng = al_load_bitmap("stunLightningAtlas.png");
+    for(size_t i = 0; i < MimicData::NUM_STUN_LIGHTNING_VARIANTS; i++)
+        stunLightningAtlas.push_back( al_create_sub_bitmap(stunLightningAtlasPng, i*MimicData::STUN_LIGHTNING_WIDTH, 0, MimicData::STUN_LIGHTNING_WIDTH, MimicData::STUN_LIGHTNING_HEIGHT));
 }
 
 void Image::UnloadResources()
@@ -109,8 +116,8 @@ void Image::UnloadResources()
     al_destroy_bitmap(gridFramePng);
     al_destroy_bitmap(gridPng);
 
-    al_destroy_bitmap(polarityButtonPng);
-    al_destroy_bitmap(polarityButtonFramePng);
+    al_destroy_bitmap(revertButtonPng);
+    al_destroy_bitmap(revertButtonFramePng);
 
     al_destroy_bitmap(tachyonBarPng);
     al_destroy_bitmap(tachyonBarFramePng);
@@ -139,6 +146,10 @@ void Image::UnloadResources()
         al_destroy_bitmap(b);
     al_destroy_bitmap(radiationSmallPng);
     al_destroy_bitmap(radiationLargePng);
+
+    for (ALLEGRO_BITMAP *b : stunLightningAtlas)
+        al_destroy_bitmap(b);
+    al_destroy_bitmap(stunLightningAtlasPng);
 
 
 }

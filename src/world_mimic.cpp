@@ -33,6 +33,26 @@ void Mimic::Initialize(int set_caste)
         isStunner = true;
         break;
 
+    case MimicData::CASTE_VARIABLE:
+    {
+        int copyRoll = Random::RandomInt(1, 4);
+        switch(copyRoll)
+        {
+            case 1:
+            health = 2;
+            break;
+            case 2:
+            isRedirector = true;
+            break;
+            case 3:
+            isSplitter = true;
+            break;
+            case 4:
+            isStunner = true;
+            break;
+        }
+        break;
+    }
     default:
         break;
     }

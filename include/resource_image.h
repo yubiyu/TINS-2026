@@ -22,8 +22,8 @@ WorldView
     static ALLEGRO_BITMAP *gridFramePng;
     static ALLEGRO_BITMAP *gridPng;
 
-    static ALLEGRO_BITMAP *polarityButtonPng;
-    static ALLEGRO_BITMAP *polarityButtonFramePng;
+    static ALLEGRO_BITMAP *revertButtonPng;
+    static ALLEGRO_BITMAP *revertButtonFramePng;
 
     static ALLEGRO_BITMAP *tachyonBarPng;
     static ALLEGRO_BITMAP *tachyonBarFramePng;
@@ -44,6 +44,9 @@ WorldView
     static ALLEGRO_BITMAP *radiationSmallPng;
     static ALLEGRO_BITMAP *radiationLargePng;
     static std::vector<ALLEGRO_BITMAP*> radiationAtlas;
+
+    static ALLEGRO_BITMAP *stunLightningAtlasPng;
+    static std::vector<ALLEGRO_BITMAP*> stunLightningAtlas;
 
     static void Initialize();
     static void Uninitialize();

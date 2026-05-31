@@ -101,8 +101,8 @@ void WorldView::DrawGrid()
     al_draw_bitmap(Image::gridFramePng, Field::field.gridFrameXPosition, Field::field.gridFrameYPosition, 0);
     al_draw_bitmap(Image::gridPng, Field::field.gridXPosition, Field::field.gridYPosition, 0);
 
-    al_draw_bitmap(Image::polarityButtonPng, Field::field.polarityButtonXPosition, Field::field.polarityButtonYPosition, 0);
-    al_draw_bitmap(Image::polarityButtonFramePng, Field::field.polarityButtonFrameXPosition, Field::field.polarityButtonFrameYPosition, 0);
+    al_draw_bitmap(Image::revertButtonPng, Field::field.revertButtonXPosition, Field::field.revertButtonYPosition, 0);
+    al_draw_bitmap(Image::revertButtonFramePng, Field::field.revertButtonFrameXPosition, Field::field.revertButtonFrameYPosition, 0);
 
     // Barberpole effect using two rectangular draw regions.
     float firstPart = std::min(Field::field.tachyonBarCurrentWidth, Field::field.tachyonBarMaxWidth - Field::field.tachyonBarPhaseShift_Current);
@@ -247,9 +247,9 @@ void WorldView::DrawCapturers()
 }
 void WorldView::DrawRadiation()
 {
-    for (size_t i = 0; i < WorldModel::world.radiation.size(); i++)
+    for (size_t i = 0; i < WorldModel::world.radiations.size(); i++)
     {
-        Radiation *rad = WorldModel::world.radiation[i];
+        Radiation *rad = WorldModel::world.radiations[i];
 
         size_t drawIndex = 2 * rad->largeParticle + rad->blackPolarity;
         float drawX = rad->xPosition;

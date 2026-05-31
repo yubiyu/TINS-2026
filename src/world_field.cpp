@@ -34,14 +34,14 @@ void Field::Initialize()
         cellXYPosition[i] = {x, y};
     }
 
-    polarityButtonWidth = 64;
-    polarityButtonXPosition = gridXPosition;
-    polarityButtonYPosition = gridYPosition + gridHeight;
-    polarityButtonFrameXPosition = polarityButtonXPosition - 4;
-    polarityButtonFrameYPosition = polarityButtonYPosition;
+    revertButtonWidth = 64;
+    revertButtonXPosition = gridXPosition;
+    revertButtonYPosition = gridYPosition + gridHeight;
+    revertButtonFrameXPosition = revertButtonXPosition - 4;
+    revertButtonFrameYPosition = revertButtonYPosition;
 
-    tachyonBarXPosition = polarityButtonXPosition + polarityButtonWidth;
-    tachyonBarYPosition = polarityButtonYPosition;
+    tachyonBarXPosition = revertButtonXPosition + revertButtonWidth;
+    tachyonBarYPosition = revertButtonYPosition;
 
     tachyonBarMaxWidth = 320;
     tachyonBarHeight = 64;
@@ -68,6 +68,10 @@ void Field::Reset()
 
     contaminationCleanupRate = 1.0 / Timer::FPS;
     contaminationDoTAttenuation = contaminationDoTPerLeak / (Timer::FPS * 2);
+
+    isStunned = false;
+    stunRecovery_Max = Timer::FPS * 1.5;
+    stunRecovery_current = 0;
 
     UpdateContaminationBar();
 
@@ -121,4 +125,10 @@ void Field::UpdateContaminationBar()
     tachyonBarPhaseShift_Current += tachyonBarPhaseShift_Change;
     if (tachyonBarPhaseShift_Current >= tachyonBarMaxWidth)
         tachyonBarPhaseShift_Current -= tachyonBarMaxWidth;
+}
+
+void Field::Stun()
+{
+    isStunned = true;
+    stunRecovery_current = 0;
 }

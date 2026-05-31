@@ -31,13 +31,19 @@ void WorldModel::Uninitialize()
         delete p;
     phaseImages.clear();
 
-    for (auto *r : radiation)
+    for (auto *r : radiations)
         delete r;
-    radiation.clear();
+    radiations.clear();
+
+    for (auto *l : stunLightnings)
+        delete l;
+    stunLightnings.clear();
 }
 
 void WorldModel::Reset()
 {
+    WorldModel::Uninitialize();
+
     Field::field.Initialize();
 
     for (auto &mimic : mimicGrid)
@@ -139,11 +145,11 @@ void WorldModel::Update()
         });
     phaseImages.erase(phase_it, phaseImages.end());
 
-    for (const auto &rad : radiation)
+    for (const auto &rad : radiations)
         rad->Update();
     auto rad_it = std::remove_if(
-        radiation.begin(),
-        radiation.end(),
+        radiations.begin(),
+        radiations.end(),
         [](Radiation *rad)
         {
             if (!rad->isAlive)
@@ -153,7 +159,28 @@ void WorldModel::Update()
             }
             return false;
         });
-    radiation.erase(rad_it, radiation.end());
+    radiations.erase(rad_it, radiations.end());
+
+    for ( const auto &spark : stunLightnings)
+        spark->Update();
+    auto spark_it = std::remove_if(
+        stunLightnings.begin(),
+        stunLightnings.end(),
+        [](StunLightning *spark)
+        {
+            if(!spark->isAlive)
+            {
+                delete spark;
+                return true;
+            }
+            return false;
+        });
+    stunLightnings.erase(spark_it, stunLightnings.end());
+}
+
+void WorldModel::DeleteInactives()
+{
+    
 }
 
 void WorldModel::SpawnMimic()
@@ -175,7 +202,7 @@ void WorldModel::SpawnMimic()
     Mimic *spawnMimic = new Mimic();
     mimicGrid[gridMimicsIndex] = spawnMimic;
 
-    size_t spawnRoll = Random::RandomInt(MimicData::CASTE_MOOK, MimicData::CASTE_SPLITTER);
+    size_t spawnRoll = Random::RandomInt(MimicData::CASTE_MOOK, MimicData::CASTE_STUNNER);
 
     spawnMimic->Initialize(spawnRoll);
     if (spawnMimic->isRedirector)
@@ -274,8 +301,12 @@ void WorldModel::SpawnExplosionRadiation(float origin_x, float origin_y)
     {
         Radiation *rad = new Radiation();
         rad->Initialize(origin_x, origin_y);
-        radiation.push_back(rad);
+        radiations.push_back(rad);
     }
+}
+void WorldModel::SpawnStunLightning(float origin_x, float origin_y)
+{
+    std::cout << "Stun lightning " << origin_x << "," << origin_y << std::endl;
 }
 void WorldModel::InitiateAttackCell(size_t cell_index)
 {
@@ -313,6 +344,11 @@ void WorldModel::CompleteAttackCell(size_t cell_index)
                                      cell_index / Field::GRID_ROWS);
             }
             
+            if( target->isStunner)
+            {
+                Field::field.Stun();
+                SpawnStunLightning(target->xPosition, target->yPosition);
+            }
             target->isCaptured = true;
         }
     }
