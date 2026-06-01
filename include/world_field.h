@@ -21,6 +21,10 @@ struct Field
     float contaminationCleanupRate {};
     float contaminationDoTAttenuation {};
 
+    bool inCriticalState {};
+    float overflowGrace_max {};
+    float overflowGrace_current {};
+
     bool isStunned {};
     int stunRecovery_current {};
     int stunRecovery_Max {};
@@ -42,6 +46,14 @@ struct Field
     float tachyonBarPhaseShift_Current {};
     float tachyonBarPhaseShift_Max {};
     float tachyonBarPhaseShift_Change {};
+
+    bool tachyonBarInFlicker {};
+    int tachyonBarFlickerTicks_max {};
+    int tachyonBarFlickerTicks_current {};
+    int tachyonBarFlickers_max {};
+    int tachyonBarFlickers_current {};
+
+
 
     std::string titleString{};
     int titleStringXPosition{}, titleStringYPosition{};
@@ -117,4 +129,8 @@ struct Field
 
     void Stun();
     void DisplaceStunDialog();
+
+    void BeginContaminationFlicker();
+
+    void ResetCriticalState();
 };

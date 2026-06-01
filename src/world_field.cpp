@@ -81,11 +81,20 @@ void Field::Reset()
     contaminationCleanupRate = 1.2 / Timer::FPS;
     contaminationDoTAttenuation = contaminationDoTPerLeak / (Timer::FPS * 2);
 
+    inCriticalState = false;
+    overflowGrace_max = Timer::FPS * 5.0;
+    overflowGrace_current = overflowGrace_max;
+
     isStunned = false;
     stunRecovery_Max = Timer::FPS * 1.5;
     stunRecovery_current = 0;
 
     UpdateContaminationBar();
+    tachyonBarInFlicker = false;
+    tachyonBarFlickerTicks_current = 0;
+    tachyonBarFlickerTicks_max = Timer::FPS * 0.1;
+    tachyonBarFlickers_max = 5;
+    tachyonBarFlickers_current = 0;
 
     attackNumTicks = Timer::FPS * 0.25;
     attackCD_Required = Timer::FPS * 0.25;
@@ -138,6 +147,8 @@ void Field::Update()
 
     if (attackCD_current > 0)
         attackCD_current--;
+
+
 }
 void Field::ResetSpawnCD()
 {
@@ -164,6 +175,21 @@ int Field::SimultaneousSpawnRNG()
 
 void Field::UpdateContaminationBar()
 {
+    if(tachyonBarInFlicker)
+    {
+        tachyonBarFlickerTicks_current ++;
+        if(tachyonBarFlickerTicks_current > tachyonBarFlickerTicks_max)
+        {
+            tachyonBarFlickerTicks_current = 0;
+            tachyonBarFlickers_current ++;
+            if(tachyonBarFlickers_current > tachyonBarFlickers_max)
+            {
+                tachyonBarFlickers_current = 0;
+                tachyonBarInFlicker = false;
+            }
+        }
+    }
+
     tachyonBarCurrentWidth = tachyonBarMaxWidth * (contamination / 100.0);
     if (tachyonBarCurrentWidth > tachyonBarMaxWidth)
         tachyonBarCurrentWidth = tachyonBarMaxWidth;
@@ -209,4 +235,17 @@ void Field::DisplaceStunDialog()
         Random::RandomInt(displaceMin, displaceMax),
         Random::RandomInt(displaceMin, displaceMax)
     };
+}
+
+void Field::BeginContaminationFlicker()
+{
+    tachyonBarInFlicker = true;
+    tachyonBarFlickers_current = 0;
+    tachyonBarFlickerTicks_current = 0;
+}
+
+void Field::ResetCriticalState()
+{
+    inCriticalState = false;
+    overflowGrace_current = overflowGrace_max;
 }

@@ -16,9 +16,11 @@ ALLEGRO_BITMAP *Image::gridFramePng;
 ALLEGRO_BITMAP *Image::gridPng;
 
 ALLEGRO_BITMAP *Image::revertButtonPng;
+std::vector<ALLEGRO_BITMAP*> Image::revertButtonAtlas;
 ALLEGRO_BITMAP *Image::revertButtonFramePng;
 
 ALLEGRO_BITMAP *Image::tachyonBarPng;
+std::vector<ALLEGRO_BITMAP*> Image::tachyonBarAtlas;
 ALLEGRO_BITMAP *Image::tachyonBarFramePng;
 
 ALLEGRO_BITMAP *Image::dialogRectPng;
@@ -73,9 +75,13 @@ void Image::LoadResources()
     gridPng = al_load_bitmap("grid.png");
 
     revertButtonPng = al_load_bitmap("revertButton.png");
+    for(size_t x = 0; x < 2; x++)
+        revertButtonAtlas.push_back( al_create_sub_bitmap(revertButtonPng, x* 64, 0, 64, 64));
     revertButtonFramePng = al_load_bitmap("revertButtonFrame.png");
 
     tachyonBarPng = al_load_bitmap("tachyonBar.png");
+    for(size_t y = 0; y < 2; y++)
+        tachyonBarAtlas.push_back( al_create_sub_bitmap(tachyonBarPng, 0, y* 64, 320, 64));
     tachyonBarFramePng = al_load_bitmap("tachyonBarFrame.png");
 
     dialogRectPng = al_load_bitmap("dialogRect.png");
@@ -128,9 +134,13 @@ void Image::UnloadResources()
     al_destroy_bitmap(gridFramePng);
     al_destroy_bitmap(gridPng);
 
+    for (ALLEGRO_BITMAP *b : revertButtonAtlas)
+        al_destroy_bitmap(b);
     al_destroy_bitmap(revertButtonPng);
     al_destroy_bitmap(revertButtonFramePng);
 
+    for (ALLEGRO_BITMAP *b : tachyonBarAtlas)
+        al_destroy_bitmap(b);
     al_destroy_bitmap(tachyonBarPng);
     al_destroy_bitmap(tachyonBarFramePng);
 

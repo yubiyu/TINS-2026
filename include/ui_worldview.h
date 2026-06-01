@@ -36,5 +36,8 @@ public:
     void DrawLooseMimics();
     void DrawStunLightnings();
     void DrawRadiation();
-    void DrawDialog();
+    void DrawStunDialog();
+
+    void DrawCriticalState();
+    void DrawFailState();
 };

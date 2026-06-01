@@ -54,12 +54,11 @@ void WorldModel::Reset()
     /*
     Debug begin.
     */
-    //gameFailed = true; // Comment out.
-    //usingMaxSpawnableClade = false; // Comment out.
+    // gameFailed = true; // Comment out.
+    // usingMaxSpawnableClade = false; // Comment out.
     /*
     Debug end.
     */
-
 
     WorldModel::Uninitialize();
     Field::field.Initialize();
@@ -77,7 +76,7 @@ void WorldModel::Update()
     Field::field.Update();
     Field::field.ProgressSpawnCD();
 
-    if(gameFailed)
+    if (gameFailed)
         Field::field.currentSpawnCD -= 2; // More chaos!
 
     if (Field::field.currentSpawnCD <= 0)
@@ -140,8 +139,8 @@ void WorldModel::Update()
         if (breachMimic->isDefused || breachMimic->isExploding)
         {
             Leak();
-            if(breachMimic->isStunner)
-                SpawnStunLightning(breachMimic->xPosition, breachMimic->yPosition);        
+            if (breachMimic->isStunner)
+                SpawnStunLightning(breachMimic->xPosition, breachMimic->yPosition);
             else
                 SpawnExplosionRadiation(breachMimic->xPosition, breachMimic->yPosition);
         }
@@ -159,8 +158,6 @@ void WorldModel::Update()
             return false;
         });
     looseMimics.erase(loose_it, looseMimics.end());
-
-    
 
     for (const auto &phaseImage : phaseImages)
     {
@@ -214,19 +211,35 @@ void WorldModel::Update()
         });
     stunLightnings.erase(spark_it, stunLightnings.end());
 
-
-    if(gameFailed)
+    if (gameFailed)
     {
-        chaosScoreTicks_current ++;
-        if(chaosScoreTicks_current >= chaosScoreTicks_Max)
+        chaosScoreTicks_current++;
+        if (chaosScoreTicks_current >= chaosScoreTicks_Max)
         {
             chaosScoreTicks_current = 0;
-            for(auto &i : chaosScore)
+            for (auto &i : chaosScore)
             {
-                if(Random::FlipCoin())
+                if (Random::FlipCoin())
                     i = Random::RandomInt(1000, 9999);
             }
         }
+    }
+    else
+    {
+        if (Field::field.contamination >= 100)
+            Field::field.inCriticalState = true;
+
+        if (Field::field.inCriticalState)
+        {
+            Field::field.overflowGrace_current--;
+            if (Field::field.overflowGrace_current <= 0)
+                gameFailed = true;
+
+            if(Field::field.contamination < 100)
+                Field::field.ResetCriticalState();
+        }
+
+
     }
 }
 
@@ -471,11 +484,13 @@ void WorldModel::AddCapture(size_t which_clade)
 void WorldModel::Misplay()
 {
     Field::field.contamination += Field::field.contaminationPerMisplay;
+    Field::field.BeginContaminationFlicker();
 }
 void WorldModel::Leak()
 {
     Field::field.contamination += Field::field.contaminationPerLeak;
     Field::field.contaminationDoT += Field::field.contaminationDoTPerLeak;
+    Field::field.BeginContaminationFlicker();
 }
 
 void WorldModel::UpdateRedirectionArray()

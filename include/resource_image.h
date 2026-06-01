@@ -23,9 +23,11 @@ WorldView
     static ALLEGRO_BITMAP *gridPng;
 
     static ALLEGRO_BITMAP *revertButtonPng;
+    static std::vector<ALLEGRO_BITMAP*> revertButtonAtlas;
     static ALLEGRO_BITMAP *revertButtonFramePng;
 
     static ALLEGRO_BITMAP *tachyonBarPng;
+    static std::vector<ALLEGRO_BITMAP*> tachyonBarAtlas;
     static ALLEGRO_BITMAP *tachyonBarFramePng;
 
     static ALLEGRO_BITMAP *dialogRectPng;

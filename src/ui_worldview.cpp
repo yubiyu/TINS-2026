@@ -95,7 +95,10 @@ void WorldView::UpdateBuffer()
     DrawLooseMimics();
     DrawStunLightnings();
     DrawRadiation();
-    DrawDialog();
+    DrawStunDialog();
+
+    DrawCriticalState();
+    DrawFailState();
 
     al_set_target_bitmap(previousBitmap);
 }
@@ -162,9 +165,8 @@ void WorldView::DrawCounters()
             int textDrawY = spriteDrawY + Text::FIELD_COUNTER_FONT_HEIGHT / 2;
             std::string captureCountString = std::to_string(WorldModel::world.mimicsCaptured[mimicIndex]);
 
-            if(WorldModel::world.gameFailed)
+            if (WorldModel::world.gameFailed)
                 captureCountString = std::to_string(WorldModel::world.chaosScore[mimicIndex]);
-
 
             if (WorldModel::world.mimicsCaptured[mimicIndex] >= 1)
             {
@@ -174,7 +176,6 @@ void WorldView::DrawCounters()
             else
                 al_draw_bitmap(Image::mimicAtlas_unknownMimics[mimicIndex], spriteDrawX, spriteDrawY, 0);
 
-    
             TextUtil::al_draw_string(Text::fieldCounterFont, Palette::textDefault,
                                      textDrawX, textDrawY,
                                      ALLEGRO_ALIGN_LEFT, captureCountString);
@@ -270,9 +271,9 @@ void WorldView::DrawCapturers()
 }
 void WorldView::DrawLooseMimics()
 {
-    for(const auto & looseMimic : WorldModel::world.looseMimics)
+    for (const auto &looseMimic : WorldModel::world.looseMimics)
     {
-        if(looseMimic->inPhasing)
+        if (looseMimic->inPhasing)
             continue;
 
         size_t mimicClade = looseMimic->clade;
@@ -298,7 +299,6 @@ void WorldView::DrawLooseMimics()
                                           2.0, 2.0,
                                           looseMimic->shieldRotation, 0);
         }
-        
     }
 }
 
@@ -337,7 +337,7 @@ void WorldView::DrawRadiation()
                                drawSpin, 0);
     }
 }
-void WorldView::DrawDialog()
+void WorldView::DrawStunDialog()
 {
     if (Field::field.isStunned)
     {
@@ -387,4 +387,28 @@ void WorldView::DrawDialog()
                                  Field::field.dialogRecalibratingXY.y + Field::field.dialogRecalibratingDisplacement.y - Text::FIELD_DIALOG_FONT_HEIGHT / 2,
                                  ALLEGRO_ALIGN_CENTER, FieldData::dialog_recalibrating);
     }
+}
+
+void WorldView::DrawCriticalState()
+{
+    /*
+    if (Field::field.inCriticalState)
+    {
+        al_draw_filled_rectangle(
+            0, 0, Display::width, Display::height,
+            al_premul_rgba_f(0, 0, 0, 0.5));
+    }
+    */
+}
+
+void WorldView::DrawFailState()
+{
+    /*
+    if (WorldModel::world.gameFailed)
+    {
+        al_draw_filled_rectangle(
+            0, 0, Display::width, Display::height,
+            al_premul_rgba_f(0, 0, 0, 0.5));
+    }
+            */
 }
