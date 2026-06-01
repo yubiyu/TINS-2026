@@ -35,6 +35,6 @@ void StunLightning::Update()
 void StunLightning::Reroll()
 {
     variant = Random::RandomInt(0, MimicData::NUM_STUN_LIGHTNING_VARIANTS - 1);
-    rotation = Random::RandomReal(0, ALLEGRO_PI);
+    rotation = Random::RandomReal(0, ALLEGRO_PI*2);
     isFlipped = Random::FlipCoin();
 }

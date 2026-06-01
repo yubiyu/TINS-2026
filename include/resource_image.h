@@ -47,6 +47,7 @@ WorldView
 
     static ALLEGRO_BITMAP *radiationSmallPng;
     static ALLEGRO_BITMAP *radiationLargePng;
+    static ALLEGRO_BITMAP *shrapenelPng;
     static std::vector<ALLEGRO_BITMAP*> radiationAtlas;
 
     static ALLEGRO_BITMAP *stunLightningAtlasPng;

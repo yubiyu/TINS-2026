@@ -3,6 +3,7 @@
 struct Radiation
 {
     bool isAlive = true;
+    bool isShrapenel {};
     int lifespan {};
 
     float xPosition {}, yPosition {};
@@ -12,8 +13,8 @@ struct Radiation
 
     bool blackPolarity {};
     bool largeParticle {};
-    //float spinAngle {}, spinChange {};
+    float spinAngle {}, spinChange {};
 
-    void Initialize(float set_x, float set_y);
+    void Initialize(float set_x, float set_y, bool set_shrapenel);
     void Update();
 };

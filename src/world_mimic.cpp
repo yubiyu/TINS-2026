@@ -20,8 +20,8 @@ void Mimic::Initialize(int set_clade)
 
     case MimicData::CLADE_CRAB:
         health = 2;
-        shieldRotation = Random::RandomReal(0.0, ALLEGRO_PI);
-        shieldRotationRate = (ALLEGRO_PI / Timer::FPS) * 0.5;
+        shieldRotation = Random::RandomReal(0.0, ALLEGRO_PI*2);
+        shieldRotationRate = ((ALLEGRO_PI*2) / Timer::FPS) * 0.5;
         shieldRotatesCCW = Random::FlipCoin();
         break;
 
@@ -45,8 +45,8 @@ void Mimic::Initialize(int set_clade)
         {
         case MimicData::CLADE_CRAB:
             health = 2;
-            shieldRotation = Random::RandomReal(0.0, ALLEGRO_PI);
-            shieldRotationRate = (ALLEGRO_PI / Timer::FPS) * 0.5;
+            shieldRotation = Random::RandomReal(0.0, ALLEGRO_PI*2);
+            shieldRotationRate = ((ALLEGRO_PI*2) / Timer::FPS) * 0.5;
             shieldRotatesCCW = Random::FlipCoin();
             break;
         case MimicData::CLADE_REDIRECTOR:

@@ -47,7 +47,7 @@ void WorldModel::Reset()
     Field::field.Initialize();
 
     gameProgress = 0;
-    usingMaxSpawnableClade = true;
+    // usingMaxSpawnableClade = true;
 
     for (auto &i : mimicsCaptured)
         i = 0;
@@ -217,11 +217,13 @@ void WorldModel::SpawnMimic()
                             FieldData::CELL_HEIGHT / 2;
 
     PhaseImage *leftPhase = new PhaseImage();
-    leftPhase->Initialize(spawnMimic->xPosition - MimicData::PHASING_DISTANCE, spawnMimic->yPosition,
+    leftPhase->Initialize(spawnMimic->clade,
+                          spawnMimic->xPosition - MimicData::PHASING_DISTANCE, spawnMimic->yPosition,
                           spawnMimic->xPosition, spawnMimic->yPosition);
 
     PhaseImage *rightPhase = new PhaseImage();
-    rightPhase->Initialize(spawnMimic->xPosition + MimicData::PHASING_DISTANCE, spawnMimic->yPosition,
+    rightPhase->Initialize(spawnMimic->clade,
+                           spawnMimic->xPosition + MimicData::PHASING_DISTANCE, spawnMimic->yPosition,
                            spawnMimic->xPosition, spawnMimic->yPosition);
 
     phaseImages.push_back(leftPhase);
@@ -268,10 +270,12 @@ void WorldModel::SpawnMimic_Splitters(int origin_col, int origin_row)
                               FieldData::CELL_HEIGHT / 2;
 
         PhaseImage *leftPhase = new PhaseImage();
-        leftPhase->Initialize(splitter->xPosition - MimicData::PHASING_DISTANCE, splitter->yPosition,
+        leftPhase->Initialize(splitter->clade,
+                              splitter->xPosition - MimicData::PHASING_DISTANCE, splitter->yPosition,
                               splitter->xPosition, splitter->yPosition);
         PhaseImage *rightPhase = new PhaseImage();
-        rightPhase->Initialize(splitter->xPosition + MimicData::PHASING_DISTANCE, splitter->yPosition,
+        rightPhase->Initialize(splitter->clade,
+                               splitter->xPosition + MimicData::PHASING_DISTANCE, splitter->yPosition,
                                splitter->xPosition, splitter->yPosition);
         phaseImages.push_back(leftPhase);
         phaseImages.push_back(rightPhase);
@@ -279,11 +283,18 @@ void WorldModel::SpawnMimic_Splitters(int origin_col, int origin_row)
 }
 void WorldModel::SpawnExplosionRadiation(float origin_x, float origin_y)
 {
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 50; i++)
     {
         Radiation *rad = new Radiation();
-        rad->Initialize(origin_x, origin_y);
+        rad->Initialize(origin_x, origin_y, false);
         radiations.push_back(rad);
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        Radiation *sharps = new Radiation();
+        sharps->Initialize(origin_x, origin_y, true);
+        radiations.push_back(sharps);
     }
 }
 void WorldModel::SpawnStunLightning(float origin_x, float origin_y)
@@ -323,10 +334,12 @@ void WorldModel::CompleteAttackCell(size_t cell_index)
             if (target->isSplitter)
             {
                 PhaseImage *leftPhase = new PhaseImage();
-                leftPhase->Initialize(target->xPosition, target->yPosition,
+                leftPhase->Initialize(target->clade,
+                                      target->xPosition, target->yPosition,
                                       target->xPosition - MimicData::PHASING_DISTANCE, target->yPosition);
                 PhaseImage *rightPhase = new PhaseImage();
-                rightPhase->Initialize(target->xPosition, target->yPosition,
+                rightPhase->Initialize(target->clade,
+                                       target->xPosition, target->yPosition,
                                        target->xPosition + MimicData::PHASING_DISTANCE, target->yPosition);
                 phaseImages.push_back(leftPhase);
                 phaseImages.push_back(rightPhase);

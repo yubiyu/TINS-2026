@@ -8,38 +8,63 @@
 
 #include <allegro5/allegro5.h>
 
-void Radiation::Initialize(float set_x, float set_y)
+void Radiation::Initialize(float set_x, float set_y, bool set_shrapenel)
 {
-    lifespan = Random::RandomInt(Timer::FPS * 1, Timer::FPS * 15);
 
     xPosition = set_x;
     yPosition = set_y;
 
-    float initSpeed = Random::RandomReal(0.1, 20.0);
-    float initAngle = Random::RandomReal(0.0, ALLEGRO_PI);
+    float initSpeed = 0;
+    float initAngle = Random::RandomReal(0.0, ALLEGRO_PI*2);
+    if (set_shrapenel)
+    {
+        isShrapenel = true;
+        lifespan = Random::RandomInt(Timer::FPS * 1, Timer::FPS * 1);
+        radius = 10.0;
+
+        initSpeed = Random::RandomReal(10.0, 20.0);
+
+        spinAngle = initAngle;
+        float maxSpinChange = ((ALLEGRO_PI*2)/Timer::FPS) * 2.0;
+        spinChange = Random::RandomReal(-maxSpinChange, maxSpinChange);
+    }
+    else
+    {
+        initSpeed = Random::RandomReal(10.0, 20.0);
+
+        lifespan = Random::RandomInt(Timer::FPS * 1, Timer::FPS * 15);
+        largeParticle = Random::FlipCoin();
+
+        if (largeParticle)
+            radius = 2.0;
+        else
+            radius = 1.5;
+    }
+
+    
     xVelocity = initSpeed * std::cos(initAngle);
     yVelocity = initSpeed * std::sin(initAngle);
 
     blackPolarity = Random::FlipCoin();
-    largeParticle = Random::FlipCoin();
-    //spinAngle = initAngle;
-    //spinChange = Random::RandomReal(0.0, ALLEGRO_PI/Timer::FPS * 2.0);
-
-    if(largeParticle)
-        radius = 2.0;
-    else
-        radius = 1.5;
 }
 
 void Radiation::Update()
 {
-    lifespan --;
-    if(lifespan <= 0)
+    lifespan--;
+    if (lifespan <= 0)
         isAlive = false;
 
     xPosition += xVelocity;
     yPosition += yVelocity;
 
+    spinAngle += spinChange;
+
+    if(isShrapenel)
+        return; // No bouncy.
+
+    /*
+    Bounce off edges of the display.
+    */
     if (xPosition - radius < 0)
     {
         xPosition = radius;
@@ -61,6 +86,4 @@ void Radiation::Update()
         yPosition = Display::width - radius;
         yVelocity = -yVelocity;
     }
-
-    //spinAngle += spinChange;
 }

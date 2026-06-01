@@ -54,7 +54,7 @@ void WorldView::InputKeyboard()
     if (Keyboard::Pressed(ALLEGRO_KEY_ESCAPE))
         UIState::exit = true;
 
-    if(Keyboard::Pressed(ALLEGRO_KEY_PAD_0))
+    if (Keyboard::Pressed(ALLEGRO_KEY_PAD_0))
     {
         WorldModel::world.Reset();
         return;
@@ -237,13 +237,13 @@ void WorldView::DrawMimics()
 
         al_draw_bitmap(Image::pupilAtlas[pupilIndex], pupilDrawX, pupilDrawY, 0);
 
-        if(mimic->health > 1)
+        if (mimic->health > 1)
         {
             al_draw_scaled_rotated_bitmap(Image::bubblePng,
-                MimicData::SPRITE_WIDTH/2, MimicData::SPRITE_HEIGHT/2,
-                mimic->xPosition, mimic->yPosition,
-                2.0, 2.0, 
-                mimic->shieldRotation, 0);
+                                          MimicData::SPRITE_WIDTH / 2, MimicData::SPRITE_HEIGHT / 2,
+                                          mimic->xPosition, mimic->yPosition,
+                                          2.0, 2.0,
+                                          mimic->shieldRotation, 0);
         }
         //}
     }
@@ -280,11 +280,16 @@ void WorldView::DrawRadiation()
     {
         Radiation *rad = WorldModel::world.radiations[i];
 
-        size_t drawIndex = 2 * rad->largeParticle + rad->blackPolarity;
         float drawX = rad->xPosition;
         float drawY = rad->yPosition;
         float drawCenter = rad->radius;
-        float drawSpin = 0.0;
+        float drawSpin = rad->spinAngle;
+
+        size_t drawIndex;
+        if (rad->isShrapenel)
+            drawIndex = 4 + rad->blackPolarity;
+        else
+            drawIndex = 2 * rad->largeParticle + rad->blackPolarity;
 
         al_draw_rotated_bitmap(Image::radiationAtlas[drawIndex],
                                drawCenter, drawCenter,
@@ -297,8 +302,8 @@ void WorldView::DrawDialog()
     if (Field::field.isStunned)
     {
         al_draw_bitmap(Image::dialogRectPng,
-                       Field::field.dialogFrameXY.x + Field::field.dialogFrameDisplacement.x - FieldData::DIALOG_WIDTH/2,
-                       Field::field.dialogFrameXY.y + Field::field.dialogFrameDisplacement.y - FieldData::DIALOG_HEIGHT/2,
+                       Field::field.dialogFrameXY.x + Field::field.dialogFrameDisplacement.x - FieldData::DIALOG_WIDTH / 2,
+                       Field::field.dialogFrameXY.y + Field::field.dialogFrameDisplacement.y - FieldData::DIALOG_HEIGHT / 2,
                        0);
 
         TextUtil::al_draw_string(Text::fieldDialogFont, Palette::colours[Palette::COL_WHITE],
@@ -320,14 +325,14 @@ void WorldView::DrawDialog()
                                  ALLEGRO_ALIGN_CENTER, FieldData::dialog_gravimetric_interference);
 
         float recalibrationBarMaxWidth = 576;
-        float stunRecoveryPercent =  static_cast<float>(Field::field.stunRecovery_current)/Field::field.stunRecovery_Max; 
+        float stunRecoveryPercent = static_cast<float>(Field::field.stunRecovery_current) / Field::field.stunRecovery_Max;
         float recalibrationBarCurrentWidth = recalibrationBarMaxWidth * stunRecoveryPercent;
 
-        float x1Outline = Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x - recalibrationBarMaxWidth/2;
-        float x1Fill = Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x - recalibrationBarCurrentWidth/2;
+        float x1Outline = Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x - recalibrationBarMaxWidth / 2;
+        float x1Fill = Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x - recalibrationBarCurrentWidth / 2;
         float y1 = Field::field.dialogRecalibratingXY.y + Field::field.dialogRecalibratingDisplacement.y - Text::FIELD_DIALOG_FONT_HEIGHT / 2 - 4;
-        float x2Outline = Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x + recalibrationBarMaxWidth/2;
-        float x2Fill = Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x + recalibrationBarCurrentWidth/2;
+        float x2Outline = Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x + recalibrationBarMaxWidth / 2;
+        float x2Fill = Field::field.dialogRecalibratingXY.x + Field::field.dialogRecalibratingDisplacement.x + recalibrationBarCurrentWidth / 2;
         float y2 = Field::field.dialogRecalibratingXY.y + Field::field.dialogRecalibratingDisplacement.y + 20;
 
         al_draw_filled_rectangle(x1Fill, y1, x2Fill, y2, Palette::colours[Palette::COL_LIGHT]);
