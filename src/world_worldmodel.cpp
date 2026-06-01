@@ -281,7 +281,7 @@ void WorldModel::SpawnMimicToGrid()
     size_t cladeRoll = Random::RandomInt(MimicData::CLADE_MOOK, maxSpawnableClade);
 
     /*debug*/
-    // cladeRoll = MimicData::CLADE_STUNNER;
+    // cladeRoll = MimicData::CLADE_SPLITTER;
     /*end debug*/
 
     spawnMimic->Initialize(cladeRoll);
@@ -311,18 +311,7 @@ void WorldModel::SpawnMimicToGrid()
                             spawnRow * FieldData::CELL_HEIGHT +
                             FieldData::CELL_HEIGHT / 2;
 
-    PhaseImage *leftPhase = new PhaseImage();
-    leftPhase->Initialize(spawnMimic->clade,
-                          spawnMimic->xPosition - MimicData::PHASING_DISTANCE, spawnMimic->yPosition,
-                          spawnMimic->xPosition, spawnMimic->yPosition);
-
-    PhaseImage *rightPhase = new PhaseImage();
-    rightPhase->Initialize(spawnMimic->clade,
-                           spawnMimic->xPosition + MimicData::PHASING_DISTANCE, spawnMimic->yPosition,
-                           spawnMimic->xPosition, spawnMimic->yPosition);
-
-    phaseImages.push_back(leftPhase);
-    phaseImages.push_back(rightPhase);
+    SpawnPhaseImages(spawnMimic->clade, spawnMimic->xPosition, spawnMimic->yPosition, false);
 }
 void WorldModel::SpawnMimicBreached()
 {
@@ -342,18 +331,7 @@ void WorldModel::SpawnMimicBreached()
 
     looseMimics.push_back(breachMimic);
 
-    PhaseImage *leftPhase = new PhaseImage();
-    leftPhase->Initialize(breachMimic->clade,
-                          breachMimic->xPosition - MimicData::PHASING_DISTANCE, breachMimic->yPosition,
-                          breachMimic->xPosition, breachMimic->yPosition);
-
-    PhaseImage *rightPhase = new PhaseImage();
-    rightPhase->Initialize(breachMimic->clade,
-                           breachMimic->xPosition + MimicData::PHASING_DISTANCE, breachMimic->yPosition,
-                           breachMimic->xPosition, breachMimic->yPosition);
-
-    phaseImages.push_back(leftPhase);
-    phaseImages.push_back(rightPhase);
+    SpawnPhaseImages(breachMimic->clade, breachMimic->xPosition, breachMimic->yPosition, false);
 }
 
 void WorldModel::SpawnMimic_Splitters(int origin_col, int origin_row)
@@ -378,7 +356,7 @@ void WorldModel::SpawnMimic_Splitters(int origin_col, int origin_row)
         if (mimicGrid[adjacentCells[i]]) // Already occupied, bud.
             continue;
 
-        if (Random::RandomInt(1, 4) != 4)
+        if (Random::RandomInt(1, 3) != 3)
             continue;
 
         Mimic *splitter = new Mimic();
@@ -396,28 +374,33 @@ void WorldModel::SpawnMimic_Splitters(int origin_col, int origin_row)
                               spawnRow * FieldData::CELL_HEIGHT +
                               FieldData::CELL_HEIGHT / 2;
 
-        PhaseImage *leftPhase = new PhaseImage();
-        leftPhase->Initialize(splitter->clade,
-                              splitter->xPosition - MimicData::PHASING_DISTANCE, splitter->yPosition,
-                              splitter->xPosition, splitter->yPosition);
-        PhaseImage *rightPhase = new PhaseImage();
-        rightPhase->Initialize(splitter->clade,
-                               splitter->xPosition + MimicData::PHASING_DISTANCE, splitter->yPosition,
-                               splitter->xPosition, splitter->yPosition);
-        phaseImages.push_back(leftPhase);
-        phaseImages.push_back(rightPhase);
+        SpawnPhaseImages(splitter->clade, splitter->xPosition, splitter->yPosition, false);
     }
 }
 void WorldModel::SpawnPhaseImages(size_t set_clade, float set_x, float set_y, bool divergent)
 {
     PhaseImage *leftPhase = new PhaseImage();
-    leftPhase->Initialize(set_clade,
-                          set_x - MimicData::PHASING_DISTANCE, set_y,
-                          set_x, set_y);
     PhaseImage *rightPhase = new PhaseImage();
-    rightPhase->Initialize(set_clade,
-                           set_x + MimicData::PHASING_DISTANCE, set_y,
-                           set_x, set_y);
+
+    if (divergent)
+    {
+        leftPhase->Initialize(set_clade,
+                              set_x, set_y,
+                              set_x - MimicData::PHASING_DISTANCE, set_y);
+        rightPhase->Initialize(set_clade,
+                               set_x, set_y,
+                               set_x + MimicData::PHASING_DISTANCE, set_y);
+    }
+    else
+    {
+        leftPhase->Initialize(set_clade,
+                              set_x - MimicData::PHASING_DISTANCE, set_y,
+                              set_x, set_y);
+        rightPhase->Initialize(set_clade,
+                               set_x + MimicData::PHASING_DISTANCE, set_y,
+                               set_x, set_y);
+    }
+
     phaseImages.push_back(leftPhase);
     phaseImages.push_back(rightPhase);
 }
@@ -474,17 +457,7 @@ void WorldModel::CompleteAttackCell(size_t cell_index)
         {
             if (target->isSplitter)
             {
-                PhaseImage *leftPhase = new PhaseImage();
-                leftPhase->Initialize(target->clade,
-                                      target->xPosition, target->yPosition,
-                                      target->xPosition - MimicData::PHASING_DISTANCE, target->yPosition);
-                PhaseImage *rightPhase = new PhaseImage();
-                rightPhase->Initialize(target->clade,
-                                       target->xPosition, target->yPosition,
-                                       target->xPosition + MimicData::PHASING_DISTANCE, target->yPosition);
-                phaseImages.push_back(leftPhase);
-                phaseImages.push_back(rightPhase);
-
+                SpawnPhaseImages(target->clade, target->xPosition, target->yPosition, true);
                 SpawnMimic_Splitters(cell_index % Field::GRID_COLS,
                                      cell_index / Field::GRID_ROWS);
             }
