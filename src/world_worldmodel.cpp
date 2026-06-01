@@ -99,6 +99,10 @@ void WorldModel::Update()
         {
             occupantMimic->Update();
 
+            if (occupantMimic->isDefused)
+            {
+                SpawnPhaseImages(occupantMimic->clade, occupantMimic->xPosition, occupantMimic->yPosition, true);
+            }
             if (occupantMimic->isCaptured || occupantMimic->isDefused)
             {
                 AddCapture(occupantMimic->clade);
@@ -140,7 +144,10 @@ void WorldModel::Update()
         {
             Leak();
             if (breachMimic->isStunner)
+            {
+                Field::field.Stun();
                 SpawnStunLightning(breachMimic->xPosition, breachMimic->yPosition);
+            }
             else
                 SpawnExplosionRadiation(breachMimic->xPosition, breachMimic->yPosition);
         }
@@ -227,19 +234,24 @@ void WorldModel::Update()
     else
     {
         if (Field::field.contamination >= 100)
+        {
             Field::field.inCriticalState = true;
+            Field::field.titleString = FieldData::title_failure_imminent;
+        }
 
         if (Field::field.inCriticalState)
         {
             Field::field.overflowGrace_current--;
             if (Field::field.overflowGrace_current <= 0)
+            {
                 gameFailed = true;
+                Field::field.ResetCriticalState();
+                Field::field.titleString = FieldData::title_containment_breach;
+            }
 
-            if(Field::field.contamination < 100)
+            if (Field::field.contamination < 100)
                 Field::field.ResetCriticalState();
         }
-
-
     }
 }
 
@@ -396,6 +408,20 @@ void WorldModel::SpawnMimic_Splitters(int origin_col, int origin_row)
         phaseImages.push_back(rightPhase);
     }
 }
+void WorldModel::SpawnPhaseImages(size_t set_clade, float set_x, float set_y, bool divergent)
+{
+    PhaseImage *leftPhase = new PhaseImage();
+    leftPhase->Initialize(set_clade,
+                          set_x - MimicData::PHASING_DISTANCE, set_y,
+                          set_x, set_y);
+    PhaseImage *rightPhase = new PhaseImage();
+    rightPhase->Initialize(set_clade,
+                           set_x + MimicData::PHASING_DISTANCE, set_y,
+                           set_x, set_y);
+    phaseImages.push_back(leftPhase);
+    phaseImages.push_back(rightPhase);
+}
+
 void WorldModel::SpawnExplosionRadiation(float origin_x, float origin_y)
 {
     for (int i = 0; i < 50; i++)

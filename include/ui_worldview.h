@@ -8,7 +8,6 @@
 //Camera::worldCamera.SetXY(pcPosition.current.x - width / 2, pcPosition.current.y - height / 2);
 class WorldView : public UIBase
 {
-
     const float CAMERA_X_SPEED_DEFAULT = 4.0;
     const float CAMERA_Y_SPEED_DEFAULT = 4.0;
     float cameraXSpeed{CAMERA_X_SPEED_DEFAULT};

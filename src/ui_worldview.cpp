@@ -54,7 +54,7 @@ void WorldView::InputKeyboard()
     if (Keyboard::Pressed(ALLEGRO_KEY_ESCAPE))
         UIState::exit = true;
 
-    if (Keyboard::Pressed(ALLEGRO_KEY_PAD_0))
+    if (Keyboard::Pressed(ALLEGRO_KEY_PAD_0) && WorldModel::world.gameFailed)
     {
         WorldModel::world.Reset();
         return;
@@ -104,22 +104,44 @@ void WorldView::UpdateBuffer()
 }
 void WorldView::DrawTitle()
 {
-    TextUtil::al_draw_string(Text::fieldTitleFont, Palette::colours[Palette::COL_LIGHT],
+    ALLEGRO_COLOR titleColour;
+    if(Field::field.inCriticalState && Field::field.genericFlickerIsOn)
+        titleColour = Palette::colours[Palette::COL_BLACK];
+    else
+        titleColour = Palette::colours[Palette::COL_LIGHT];
+
+    if(! Field::field.temporaryTitleString.empty())
+        TextUtil::al_draw_string(Text::fieldTitleFont, titleColour,
                              Field::field.titleStringXPosition, Field::field.titleStringYPosition,
-                             ALLEGRO_ALIGN_CENTRE, Field::field.titleString);
+                             ALLEGRO_ALIGN_CENTRE, Field::field.temporaryTitleString);
+    else
+        TextUtil::al_draw_string(Text::fieldTitleFont, titleColour,
+                             Field::field.titleStringXPosition, Field::field.titleStringYPosition,
+                             ALLEGRO_ALIGN_CENTRE, Field::field.titleString);    
 }
 void WorldView::DrawGrid()
 {
     al_draw_bitmap(Image::gridFramePng, Field::field.gridFrameXPosition, Field::field.gridFrameYPosition, 0);
     al_draw_bitmap(Image::gridPng, Field::field.gridXPosition, Field::field.gridYPosition, 0);
 
-    al_draw_bitmap(Image::revertButtonPng, Field::field.revertButtonXPosition, Field::field.revertButtonYPosition, 0);
+    if(WorldModel::world.gameFailed)
+    {
+        al_draw_bitmap(Image::revertButtonAtlas[Field::field.genericFlickerIsOn], Field::field.revertButtonXPosition, Field::field.revertButtonYPosition, 0);
+    }
+    else
+        al_draw_bitmap(Image::revertButtonAtlas[0], Field::field.revertButtonXPosition, Field::field.revertButtonYPosition, 0);
+
     al_draw_bitmap(Image::revertButtonFramePng, Field::field.revertButtonFrameXPosition, Field::field.revertButtonFrameYPosition, 0);
 
     // Barberpole effect using two rectangular draw regions.
+
+    size_t barIndex = 0;
+    if(Field::field.tachyonBarInFlicker && Field::field.tachyonBarFlickers_current%2 == 0)
+        barIndex = 1;
+
     float firstPart = std::min(Field::field.tachyonBarCurrentWidth, Field::field.tachyonBarMaxWidth - Field::field.tachyonBarPhaseShift_Current);
     al_draw_bitmap_region(
-        Image::tachyonBarPng,
+        Image::tachyonBarAtlas[barIndex],
         Field::field.tachyonBarPhaseShift_Current, 0,
         firstPart,
         Field::field.tachyonBarHeight,
@@ -130,7 +152,7 @@ void WorldView::DrawGrid()
     if (secondPart > 0)
     {
         al_draw_bitmap_region(
-            Image::tachyonBarPng,
+            Image::tachyonBarAtlas[barIndex],
             0, 0,
             secondPart,
             Field::field.tachyonBarHeight,
@@ -148,6 +170,19 @@ void WorldView::DrawGrid()
         float x2 = x1 + 4;
         float y2 = y1 + Field::field.tachyonBarHeight - 8;
         al_draw_filled_rectangle(x1, y1, x2, y2, Palette::colours[Palette::COL_BLACK]);
+    }
+
+    if(WorldModel::world.gameFailed)
+    {
+        ALLEGRO_COLOR revertTextColour;
+        if(Field::field.genericFlickerIsOn)
+            revertTextColour = Palette::colours[Palette::COL_WHITE];
+        else
+            revertTextColour = Palette::colours[Palette::COL_BLACK];
+
+        int revertTextX = Field::field.tachyonBarXPosition + Field::field.tachyonBarMaxWidth/2;
+        int revertTextY = Field::field.tachyonBarYPosition + 12;
+        al_draw_text(Text::fieldDialogFont, revertTextColour, revertTextX, revertTextY, ALLEGRO_ALIGN_CENTER, "REVERT()");
     }
 }
 void WorldView::DrawCounters()
@@ -339,9 +374,12 @@ void WorldView::DrawRadiation()
 }
 void WorldView::DrawStunDialog()
 {
+    if(WorldModel::world.gameFailed)
+        return;
+
     if (Field::field.isStunned)
     {
-        al_draw_bitmap(Image::dialogRectPng,
+        al_draw_bitmap(Image::stunDialogRectPng,
                        Field::field.dialogFrameXY.x + Field::field.dialogFrameDisplacement.x - FieldData::DIALOG_WIDTH / 2,
                        Field::field.dialogFrameXY.y + Field::field.dialogFrameDisplacement.y - FieldData::DIALOG_HEIGHT / 2,
                        0);
@@ -358,11 +396,11 @@ void WorldView::DrawStunDialog()
         TextUtil::al_draw_string(Text::fieldDialogFont, Palette::colours[Palette::COL_WHITE],
                                  Field::field.dialogGravimetricInterferenceXY.x + Field::field.dialogGravimetricInterferenceDisplacement.x,
                                  Field::field.dialogGravimetricInterferenceXY.y + Field::field.dialogGravimetricInterferenceDisplacement.y - Text::FIELD_DIALOG_FONT_HEIGHT / 2 - 4, // Backdrop
-                                 ALLEGRO_ALIGN_CENTER, FieldData::dialog_gravimetric_interference);
+                                 ALLEGRO_ALIGN_CENTER, FieldData::dialog_gravimetricinterference);
         TextUtil::al_draw_string(Text::fieldDialogFont, Palette::colours[Palette::COL_BLACK],
                                  Field::field.dialogGravimetricInterferenceXY.x + Field::field.dialogGravimetricInterferenceDisplacement.x,
                                  Field::field.dialogGravimetricInterferenceXY.y + Field::field.dialogGravimetricInterferenceDisplacement.y - Text::FIELD_DIALOG_FONT_HEIGHT / 2,
-                                 ALLEGRO_ALIGN_CENTER, FieldData::dialog_gravimetric_interference);
+                                 ALLEGRO_ALIGN_CENTER, FieldData::dialog_gravimetricinterference);
 
         float recalibrationBarMaxWidth = 576;
         float stunRecoveryPercent = static_cast<float>(Field::field.stunRecovery_current) / Field::field.stunRecovery_Max;

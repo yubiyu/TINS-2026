@@ -39,6 +39,10 @@ void Field::Initialize()
     revertButtonYPosition = gridYPosition + gridHeight;
     revertButtonFrameXPosition = revertButtonXPosition - 4;
     revertButtonFrameYPosition = revertButtonYPosition;
+    
+    genericFlickerTicks_current = 0;
+    genericFlickerTicks_max = Timer::FPS * 0.5;
+    genericFlickerIsOn = false;
 
     tachyonBarXPosition = revertButtonXPosition + revertButtonWidth;
     tachyonBarYPosition = revertButtonYPosition;
@@ -68,7 +72,11 @@ void Field::Initialize()
 
 void Field::Reset()
 {
-    titleString = "mimic_suppression_field";
+    titleString = FieldData::title_mimic_suppression_array;
+    temporaryTitleString = "";
+    temporaryTitleStringLifespan_current = 0;
+    temporaryTitleStringLifespan_max = Timer::FPS * 0.5;
+    temporaryTitleStringNoTimeout = false;
 
     contamination = 0.0;
     contaminationDoT = 0.2;
@@ -92,8 +100,8 @@ void Field::Reset()
     UpdateContaminationBar();
     tachyonBarInFlicker = false;
     tachyonBarFlickerTicks_current = 0;
-    tachyonBarFlickerTicks_max = Timer::FPS * 0.1;
-    tachyonBarFlickers_max = 5;
+    tachyonBarFlickerTicks_max = Timer::FPS * 0.05;
+    tachyonBarFlickers_max = 6;
     tachyonBarFlickers_current = 0;
 
     attackNumTicks = Timer::FPS * 0.25;
@@ -116,6 +124,13 @@ void Field::Reset()
 }
 void Field::Update()
 {
+    if(! temporaryTitleString.empty() && ! temporaryTitleStringNoTimeout)
+    {
+        temporaryTitleStringLifespan_current --;
+        if(temporaryTitleStringLifespan_current <= 0)
+            temporaryTitleString.clear();
+    }
+
     if (isStunned)
     {
         stunRecovery_current++;
@@ -148,6 +163,13 @@ void Field::Update()
     if (attackCD_current > 0)
         attackCD_current--;
 
+    genericFlickerTicks_current ++;
+    if(genericFlickerTicks_current > genericFlickerTicks_max)
+    {
+        genericFlickerTicks_current = 0;
+        genericFlickerIsOn = !genericFlickerIsOn;
+    }
+
 
 }
 void Field::ResetSpawnCD()
@@ -163,9 +185,9 @@ int Field::SimultaneousSpawnRNG()
     int mimicsToSpawn = 0;
     int roll = Random::RandomInt(1, 100);
 
-    if (roll <= 50)
+    if (roll <= 60)
         mimicsToSpawn = 1;
-    else if (roll <= 85)
+    else if (roll <= 95)
         mimicsToSpawn = 2;
     else if (roll <= 100)
         mimicsToSpawn = 3;
@@ -205,6 +227,8 @@ void Field::Stun()
     stunRecovery_current = 0;
 
     dialogDisplacementTicks_current = 0;
+
+    SetSillyTemporaryTitle();
 }
 
 void Field::DisplaceStunDialog()
@@ -248,4 +272,19 @@ void Field::ResetCriticalState()
 {
     inCriticalState = false;
     overflowGrace_current = overflowGrace_max;
+
+    titleString = FieldData::title_mimic_suppression_array;
+}
+
+void Field::SetTemporaryTitleString(const std::string &set_string, bool set_no_timeout)
+{
+    temporaryTitleString = set_string;
+    temporaryTitleStringNoTimeout = set_no_timeout;
+
+    temporaryTitleStringLifespan_current = temporaryTitleStringLifespan_max;
+}
+
+void Field::SetSillyTemporaryTitle()
+{
+    SetTemporaryTitleString(FieldData::randomTitles[ Random::RandomInt(0, FieldData::randomTitles.size() - 1)], false);
 }

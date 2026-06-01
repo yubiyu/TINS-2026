@@ -43,6 +43,7 @@ public:
     void SpawnMimicToGrid();
     void SpawnMimicBreached();
     void SpawnMimic_Splitters(int origin_col, int origin_row);
+    void SpawnPhaseImages(size_t set_clade, float set_x, float set_y, bool divergent);
     void SpawnExplosionRadiation(float origin_x, float origin_y);
     void SpawnStunLightning(float origin_x, float origin_y);
 

@@ -16,14 +16,14 @@ ALLEGRO_BITMAP *Image::gridFramePng;
 ALLEGRO_BITMAP *Image::gridPng;
 
 ALLEGRO_BITMAP *Image::revertButtonPng;
-std::vector<ALLEGRO_BITMAP*> Image::revertButtonAtlas;
+std::vector<ALLEGRO_BITMAP *> Image::revertButtonAtlas;
 ALLEGRO_BITMAP *Image::revertButtonFramePng;
 
 ALLEGRO_BITMAP *Image::tachyonBarPng;
-std::vector<ALLEGRO_BITMAP*> Image::tachyonBarAtlas;
+std::vector<ALLEGRO_BITMAP *> Image::tachyonBarAtlas;
 ALLEGRO_BITMAP *Image::tachyonBarFramePng;
 
-ALLEGRO_BITMAP *Image::dialogRectPng;
+ALLEGRO_BITMAP *Image::stunDialogRectPng;
 
 ALLEGRO_BITMAP *Image::mimicAtlasPng;
 std::vector<ALLEGRO_BITMAP *> Image::mimicAtlas_mimicsA;
@@ -43,10 +43,10 @@ std::vector<ALLEGRO_BITMAP *> Image::captureAtlas_mask;
 ALLEGRO_BITMAP *Image::radiationSmallPng;
 ALLEGRO_BITMAP *Image::radiationLargePng;
 ALLEGRO_BITMAP *Image::shrapenelPng;
-std::vector<ALLEGRO_BITMAP*> Image::radiationAtlas;
+std::vector<ALLEGRO_BITMAP *> Image::radiationAtlas;
 
 ALLEGRO_BITMAP *Image::stunLightningAtlasPng;
-std::vector<ALLEGRO_BITMAP*> Image::stunLightningAtlas;
+std::vector<ALLEGRO_BITMAP *> Image::stunLightningAtlas;
 
 void Image::Initialize()
 {
@@ -75,16 +75,16 @@ void Image::LoadResources()
     gridPng = al_load_bitmap("grid.png");
 
     revertButtonPng = al_load_bitmap("revertButton.png");
-    for(size_t x = 0; x < 2; x++)
-        revertButtonAtlas.push_back( al_create_sub_bitmap(revertButtonPng, x* 64, 0, 64, 64));
+    for (size_t x = 0; x < 2; x++)
+        revertButtonAtlas.push_back(al_create_sub_bitmap(revertButtonPng, x * 64, 0, 64, 64));
     revertButtonFramePng = al_load_bitmap("revertButtonFrame.png");
 
     tachyonBarPng = al_load_bitmap("tachyonBar.png");
-    for(size_t y = 0; y < 2; y++)
-        tachyonBarAtlas.push_back( al_create_sub_bitmap(tachyonBarPng, 0, y* 64, 320, 64));
+    for (size_t y = 0; y < 2; y++)
+        tachyonBarAtlas.push_back(al_create_sub_bitmap(tachyonBarPng, 0, y * 64, 320, 64));
     tachyonBarFramePng = al_load_bitmap("tachyonBarFrame.png");
 
-    dialogRectPng = al_load_bitmap("dialogRect.png");
+    stunDialogRectPng = al_load_bitmap("stunDialogRect.png");
 
     mimicAtlasPng = al_load_bitmap("mimicAtlas.png");
     for (size_t i = 0; i < MimicData::NUM_CLADES; i++)
@@ -97,8 +97,8 @@ void Image::LoadResources()
 
     pupilAtlasPng = al_load_bitmap("pupilAtlas.png");
     for (size_t y = 0; y < MimicData::NUM_PUPIL_SHAPES; y++)
-        for(size_t x = 0; x < MimicData::NUM_PUPIL_VARIANTS; x++)
-            pupilAtlas.push_back( al_create_sub_bitmap(pupilAtlasPng, x*MimicData::SPRITE_WIDTH, y*MimicData::SPRITE_HEIGHT, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
+        for (size_t x = 0; x < MimicData::NUM_PUPIL_VARIANTS; x++)
+            pupilAtlas.push_back(al_create_sub_bitmap(pupilAtlasPng, x * MimicData::SPRITE_WIDTH, y * MimicData::SPRITE_HEIGHT, MimicData::SPRITE_WIDTH, MimicData::SPRITE_HEIGHT));
 
     bubblePng = al_load_bitmap("bubble.png");
 
@@ -112,16 +112,16 @@ void Image::LoadResources()
     radiationSmallPng = al_load_bitmap("radiationSmall.png");
     radiationLargePng = al_load_bitmap("radiationLarge.png");
     shrapenelPng = al_load_bitmap("shrapenel.png");
-    for(size_t i = 0; i < 2; i++)
-        radiationAtlas.push_back(al_create_sub_bitmap(radiationSmallPng, i*3, 0, 3, 3));
-    for(size_t i = 0; i < 2; i++)
-        radiationAtlas.push_back(al_create_sub_bitmap(radiationLargePng, i*4, 0, 4, 4));
-    for(size_t i = 0; i < 2; i++)
-        radiationAtlas.push_back(al_create_sub_bitmap(shrapenelPng, i*20, 0, 20, 20 ));
+    for (size_t i = 0; i < 2; i++)
+        radiationAtlas.push_back(al_create_sub_bitmap(radiationSmallPng, i * 3, 0, 3, 3));
+    for (size_t i = 0; i < 2; i++)
+        radiationAtlas.push_back(al_create_sub_bitmap(radiationLargePng, i * 4, 0, 4, 4));
+    for (size_t i = 0; i < 2; i++)
+        radiationAtlas.push_back(al_create_sub_bitmap(shrapenelPng, i * 20, 0, 20, 20));
 
     stunLightningAtlasPng = al_load_bitmap("stunLightningAtlas.png");
-    for(size_t i = 0; i < MimicData::NUM_STUN_LIGHTNING_VARIANTS; i++)
-        stunLightningAtlas.push_back( al_create_sub_bitmap(stunLightningAtlasPng, i*MimicData::STUN_LIGHTNING_WIDTH, 0, MimicData::STUN_LIGHTNING_WIDTH, MimicData::STUN_LIGHTNING_HEIGHT));
+    for (size_t i = 0; i < MimicData::NUM_STUN_LIGHTNING_VARIANTS; i++)
+        stunLightningAtlas.push_back(al_create_sub_bitmap(stunLightningAtlasPng, i * MimicData::STUN_LIGHTNING_WIDTH, 0, MimicData::STUN_LIGHTNING_WIDTH, MimicData::STUN_LIGHTNING_HEIGHT));
 }
 
 void Image::UnloadResources()
@@ -144,7 +144,7 @@ void Image::UnloadResources()
     al_destroy_bitmap(tachyonBarPng);
     al_destroy_bitmap(tachyonBarFramePng);
 
-    al_destroy_bitmap(dialogRectPng);
+    al_destroy_bitmap(stunDialogRectPng);
 
     for (ALLEGRO_BITMAP *b : mimicAtlas_mimicsA)
         al_destroy_bitmap(b);
@@ -177,6 +177,4 @@ void Image::UnloadResources()
     for (ALLEGRO_BITMAP *b : stunLightningAtlas)
         al_destroy_bitmap(b);
     al_destroy_bitmap(stunLightningAtlasPng);
-
-
 }

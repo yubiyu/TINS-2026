@@ -30,7 +30,7 @@ WorldView
     static std::vector<ALLEGRO_BITMAP*> tachyonBarAtlas;
     static ALLEGRO_BITMAP *tachyonBarFramePng;
 
-    static ALLEGRO_BITMAP *dialogRectPng;
+    static ALLEGRO_BITMAP *stunDialogRectPng;
     
     static ALLEGRO_BITMAP *mimicAtlasPng;
     static std::vector<ALLEGRO_BITMAP*> mimicAtlas_mimicsA;

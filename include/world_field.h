@@ -38,6 +38,10 @@ struct Field
     int revertButtonWidth {}, revertButtonHeight {};
     int revertButtonXPosition{}, revertButtonYPosition {};
     int revertButtonFrameXPosition{}, revertButtonFrameYPosition{};
+    
+    int genericFlickerTicks_max{};
+    int genericFlickerTicks_current{};
+    bool genericFlickerIsOn{};
 
     int tachyonBarMaxWidth {}, tachyonBarHeight {};
     float tachyonBarCurrentWidth {};
@@ -56,7 +60,11 @@ struct Field
 
 
     std::string titleString{};
+    std::string temporaryTitleString{};
     int titleStringXPosition{}, titleStringYPosition{};
+    int temporaryTitleStringLifespan_current {};
+    int temporaryTitleStringLifespan_max {};
+    bool temporaryTitleStringNoTimeout {};
 
     static const size_t GRID_COLS = 3;
     static const size_t GRID_ROWS = 3;
@@ -133,4 +141,7 @@ struct Field
     void BeginContaminationFlicker();
 
     void ResetCriticalState();
+
+    void SetTemporaryTitleString(const std::string &set_string, bool set_no_timeout);
+    void SetSillyTemporaryTitle();
 };
