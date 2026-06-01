@@ -36,7 +36,4 @@ public:
     void DrawStunLightnings();
     void DrawRadiation();
     void DrawStunDialog();
-
-    void DrawCriticalState();
-    void DrawFailState();
 };

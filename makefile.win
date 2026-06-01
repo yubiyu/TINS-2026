@@ -4,10 +4,10 @@ CXX := g++
 # === Project directories ===
 SRC_DIR := src
 OBJ_DIR := build
-BIN     := tins.exe
+BIN     := MimicPanic.exe
 
 # === Compiler flags ===
-CXXFLAGS := -std=c++20 -g -Wall -Wextra -Werror -pedantic -MMD -MP -Iinclude
+CXXFLAGS := -std=c++20 -O2 -Wall -Wextra -Werror -pedantic -MMD -MP -Iinclude
 ALLEGRO_PATH := C:/Development/Libraries/allegro
 CXXFLAGS += -I"$(ALLEGRO_PATH)/include"
 

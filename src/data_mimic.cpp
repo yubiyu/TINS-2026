@@ -15,7 +15,7 @@ void MimicData::Install()
     progressToEncounterClade[CLADE_MOOK] = 0;
     progressToEncounterClade[CLADE_CRAB] = 10;
     progressToEncounterClade[CLADE_REDIRECTOR] = 20;
-    progressToEncounterClade[CLADE_SPLITTER] = 60;
+    progressToEncounterClade[CLADE_SPLITTER] = 40;
     progressToEncounterClade[CLADE_STUNNER] = 75;
     progressToEncounterClade[CLADE_VARIABLE] = 150;
 

@@ -531,3 +531,25 @@ void WorldModel::SetDefaultRedirectionArray()
 {
     redirectionArray = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 }
+
+void WorldModel::Reset_FX()
+{
+    for (int i = 0; i < 200; i++)
+    {
+        Radiation *rad = new Radiation();
+        int rollX = Random::RandomInt(0, Display::width);
+        int rollY = Random::RandomInt(0, Display::height);
+        rad->Initialize(rollX, rollY, false);
+        radiations.push_back(rad);
+    }
+
+    for (int i = 0; i < 20; i++)
+    {
+        StunLightning *spark = new StunLightning();
+        spark->Initialize(Field::field.revertButtonXPosition + Field::field.revertButtonWidth/2,
+                          Field::field.revertButtonFrameYPosition + Field::field.revertButtonHeight/2);
+        stunLightnings.push_back(spark);
+    }
+
+    
+}

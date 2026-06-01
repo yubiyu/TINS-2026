@@ -13,7 +13,7 @@ PKG_LIBS := $(shell pkg-config --libs $(PKG))
 # === Directories ===
 SRC_DIR := src
 OBJ_DIR := build
-BIN := tins
+BIN := MimicPanic
 
 # === Source Files ===
 CPP_SRCS := $(wildcard $(SRC_DIR)/*.cpp)

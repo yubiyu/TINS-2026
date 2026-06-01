@@ -55,4 +55,6 @@ public:
 
     void UpdateRedirectionArray();
     void SetDefaultRedirectionArray();
+
+    void Reset_FX();
 };

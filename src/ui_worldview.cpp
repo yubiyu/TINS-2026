@@ -57,6 +57,8 @@ void WorldView::InputKeyboard()
     if (Keyboard::Pressed(ALLEGRO_KEY_PAD_0) && WorldModel::world.gameFailed)
     {
         WorldModel::world.Reset();
+        WorldModel::world.Reset_FX();
+
         return;
     }
 
@@ -96,9 +98,6 @@ void WorldView::UpdateBuffer()
     DrawStunLightnings();
     DrawRadiation();
     DrawStunDialog();
-
-    DrawCriticalState();
-    DrawFailState();
 
     al_set_target_bitmap(previousBitmap);
 }
@@ -425,28 +424,4 @@ void WorldView::DrawStunDialog()
                                  Field::field.dialogRecalibratingXY.y + Field::field.dialogRecalibratingDisplacement.y - Text::FIELD_DIALOG_FONT_HEIGHT / 2,
                                  ALLEGRO_ALIGN_CENTER, FieldData::dialog_recalibrating);
     }
-}
-
-void WorldView::DrawCriticalState()
-{
-    /*
-    if (Field::field.inCriticalState)
-    {
-        al_draw_filled_rectangle(
-            0, 0, Display::width, Display::height,
-            al_premul_rgba_f(0, 0, 0, 0.5));
-    }
-    */
-}
-
-void WorldView::DrawFailState()
-{
-    /*
-    if (WorldModel::world.gameFailed)
-    {
-        al_draw_filled_rectangle(
-            0, 0, Display::width, Display::height,
-            al_premul_rgba_f(0, 0, 0, 0.5));
-    }
-            */
 }
