@@ -117,7 +117,7 @@ bool Core::Initialize(char **argv)
     SettingsMenu::settingsMenu.LoadFromConfig();
 
     UIState::OpenMainRectUI(&WorldView::worldView);
-    UIState::OpenFullscreenMenu(&TitleMenu::titleMenu);
+    //UIState::OpenFullscreenMenu(&TitleMenu::titleMenu);
 
     return true;
 }

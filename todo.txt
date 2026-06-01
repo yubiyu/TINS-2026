@@ -1,6 +1,6 @@
 
 
-1) overflow reset
+1) both containment breach and overflow reset needs more special effects.
 
 2) bestiary
 

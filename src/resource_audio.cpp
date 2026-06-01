@@ -5,7 +5,7 @@
 ALLEGRO_SAMPLE_INSTANCE *Audio::activeBgmInstance;
 std::vector<ALLEGRO_SAMPLE_INSTANCE *> Audio::activeSfxInstances;
 
-//ALLEGRO_SAMPLE *Audio::treeBgm;
+ALLEGRO_SAMPLE *Audio::reformatBgm;
 
 float Audio::bgmGain;
 float Audio::sfxGain;
@@ -41,13 +41,13 @@ void Audio::LoadResources()
 {
     std::cout << "Audio: Loading resources." << std::endl;
     al_reserve_samples(16);
-    //treeBgm = al_load_sample("tree.ogg");
+    reformatBgm = al_load_sample("Reformat.ogg");
 }
 
 void Audio::UnloadResources()
 {
     std::cout << "Audio: Unloading resources." << std::endl;
-    //al_destroy_sample(treeBgm);
+    al_destroy_sample(reformatBgm);
 }
 
 void Audio::SetBgmGain(float gain)

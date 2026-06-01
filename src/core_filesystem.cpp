@@ -15,6 +15,11 @@ void Filesystem::Initialize(char **argv)
         std::cout << "Error - Filesystem: font.zip not found." << std::endl;
     else
         std::cout << "Filesystem: font.zip successfully mounted." << std::endl;
+
+    if (PHYSFS_mount("data/audio.zip", "/", 1) == 0)
+        std::cout << "Error - Filesystem: audio.zip not found." << std::endl;
+    else
+        std::cout << "Filesystem: audio.zip successfully mounted." << std::endl;
 }
 void Filesystem::Uninitialize()
 {

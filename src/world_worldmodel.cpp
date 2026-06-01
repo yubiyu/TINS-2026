@@ -4,7 +4,7 @@
 #include "core_random.h"
 #include "core_display.h"
 
-#include "ui_worldview.h"
+#include "resource_audio.h"
 
 #include "data_field.h"
 
@@ -15,6 +15,7 @@ WorldModel WorldModel::world;
 
 void WorldModel::Initialize()
 {
+    Audio::SetActiveBgm(Audio::reformatBgm, 0);
     Reset();
 }
 
@@ -281,26 +282,32 @@ void WorldModel::SpawnMimicToGrid()
     size_t cladeRoll = Random::RandomInt(MimicData::CLADE_MOOK, maxSpawnableClade);
 
     /*debug*/
-    // cladeRoll = MimicData::CLADE_SPLITTER;
+    cladeRoll = MimicData::CLADE_REDIRECTOR;
     /*end debug*/
 
     spawnMimic->Initialize(cladeRoll);
     if (spawnMimic->isRedirector)
     {
+        /*
+        First populate the vector of possible redirectable cells.
+        */
         std::vector<size_t> redirectableCells;
         redirectableCells.reserve(Field::GRID_CELLS);
         for (size_t i = 0; i < redirectionArray.size(); i++)
-            if (redirectionArray[i] == i && i != gridMimicsIndex) // i.e. hasn't been changed from its default value, and not about to redirect to itself.
+            if (redirectionArray[i] == i && // Element hasn't been changed from its default value.
+                i != gridMimicsIndex)       //  Element cannot redirect to itself.
                 redirectableCells.push_back(i);
 
-        if (!redirectableCells.empty())
+        if (redirectableCells.empty())                              // No room to spawn the new redirector.
+        {
+            spawnMimic->Initialize(MimicData::CLADE_MOOK); // Reinitialize as a mook.
+        }
+        else
         {
             size_t redirectionRoll = Random::RandomInt(0, redirectableCells.size() - 1);
             spawnMimic->SetRedirectionIndex(redirectableCells[redirectionRoll]);
             UpdateRedirectionArray();
         }
-        else
-            spawnMimic->Initialize(MimicData::CLADE_MOOK); // No room to spawn the new guy.
     }
 
     spawnMimic->xPosition = Field::field.gridXPosition +
@@ -356,7 +363,7 @@ void WorldModel::SpawnMimic_Splitters(int origin_col, int origin_row)
         if (mimicGrid[adjacentCells[i]]) // Already occupied, bud.
             continue;
 
-        if (Random::RandomInt(1, 3) != 3)
+        if (Random::FlipCoin())
             continue;
 
         Mimic *splitter = new Mimic();

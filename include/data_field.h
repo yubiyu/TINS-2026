@@ -17,9 +17,9 @@ struct FieldData
     static const inline std::string title_mimic_suppression_array = "mimic_suppression_array";
     static const inline std::string title_failure_imminent = "array_failure_imminent!";
     static const inline std::string title_containment_breach = "CONTAINMENT_BREACHED";
-    static const inline std::array<std::string, 15> randomTitles =
+    static const inline std::array<std::string, 18> randomTitles =
     {
-        "don't_turn_around",
+        "dont_turn_around",
         "to_the_moon",
         "you_got_mail",
         "eat_your_veggies",
@@ -30,9 +30,12 @@ struct FieldData
         "resistance_is_futile",
         "there_is_no_spoon",
         "we_remember_earth",
-        "it's_a_trap",
+        "i_have_no_mouth",
+        "and_i_must_scream",
+        "its_a_trap",
         "does_not_compute",
         "walk_without_rhythm",
+        "use_the_force",
         ":(){ :|:& };:"
     };
 
