@@ -72,11 +72,18 @@ void Field::Initialize()
 
 void Field::Reset()
 {
+    notifiedGameFailed = false;
+
     titleString = FieldData::title_mimic_suppression_array;
     temporaryTitleString = "";
     temporaryTitleStringLifespan_current = 0;
-    temporaryTitleStringLifespan_max = Timer::FPS * 0.5;
+    temporaryTitleStringLifespan_silly = Timer::FPS * 0.5;
+    temporaryTitleStringLifespan_technobabble = Timer::FPS * 2.0;
     temporaryTitleStringNoTimeout = false;
+
+    spewTechnobabbleCD_Min = Timer::FPS * 2;
+    spewTechnobabbleCD_Max = Timer::FPS * 5;
+    spewTechnobabbleCD = spewTechnobabbleCD_Max;
 
     contamination = 0.0;
     contaminationDoT = 0.2;
@@ -121,6 +128,8 @@ void Field::Reset()
     spawnCDUpperLimit = baselineSpawnCD + Timer::FPS * 0.5;
 
     currentSpawnCD = spawnCDLowerLimit;
+
+    
 }
 void Field::Update()
 {
@@ -130,6 +139,16 @@ void Field::Update()
         if(temporaryTitleStringLifespan_current <= 0)
             temporaryTitleString.clear();
     }
+    spewTechnobabbleCD --;
+    if(spewTechnobabbleCD <= 0 && !inCriticalState && !notifiedGameFailed)
+    {
+        SetTechnobabbleTemporaryTitle();
+        spewTechnobabbleCD = Random::RandomInt(spewTechnobabbleCD_Min, spewTechnobabbleCD_Max);
+    }
+
+
+
+
 
     if (isStunned)
     {
@@ -281,10 +300,22 @@ void Field::SetTemporaryTitleString(const std::string &set_string, bool set_no_t
     temporaryTitleString = set_string;
     temporaryTitleStringNoTimeout = set_no_timeout;
 
-    temporaryTitleStringLifespan_current = temporaryTitleStringLifespan_max;
+    temporaryTitleStringLifespan_current = Timer::FPS;
+}
+
+void Field::SetTechnobabbleTemporaryTitle()
+{
+    std::string babble;
+    babble += FieldData::statusTechnobabbleA[ Random::RandomInt(0, FieldData::statusTechnobabbleA.size() - 1) ];
+    babble += FieldData::statusTechnobabbleB[ Random::RandomInt(0, FieldData::statusTechnobabbleB.size() - 1) ];
+    SetTemporaryTitleString(babble, false);
+
+    temporaryTitleStringLifespan_current = temporaryTitleStringLifespan_technobabble;
 }
 
 void Field::SetSillyTemporaryTitle()
 {
     SetTemporaryTitleString(FieldData::randomTitles[ Random::RandomInt(0, FieldData::randomTitles.size() - 1)], false);
+
+    temporaryTitleStringLifespan_current = temporaryTitleStringLifespan_silly;
 }

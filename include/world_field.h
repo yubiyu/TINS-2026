@@ -10,6 +10,8 @@
 
 struct Field
 {
+    bool notifiedGameFailed {};
+
     float contamination {};
     float contaminationDoT {};
 
@@ -63,8 +65,13 @@ struct Field
     std::string temporaryTitleString{};
     int titleStringXPosition{}, titleStringYPosition{};
     int temporaryTitleStringLifespan_current {};
-    int temporaryTitleStringLifespan_max {};
+    int temporaryTitleStringLifespan_silly {};
+    int temporaryTitleStringLifespan_technobabble {};
     bool temporaryTitleStringNoTimeout {};
+
+    int spewTechnobabbleCD {};
+    int spewTechnobabbleCD_Min {};
+    int spewTechnobabbleCD_Max {};
 
     static const size_t GRID_COLS = 3;
     static const size_t GRID_ROWS = 3;
@@ -143,5 +150,6 @@ struct Field
     void ResetCriticalState();
 
     void SetTemporaryTitleString(const std::string &set_string, bool set_no_timeout);
+    void SetTechnobabbleTemporaryTitle();
     void SetSillyTemporaryTitle();
 };

@@ -246,6 +246,7 @@ void WorldModel::Update()
             if (Field::field.overflowGrace_current <= 0)
             {
                 gameFailed = true;
+                Field::field.notifiedGameFailed = true;
                 Field::field.ResetCriticalState();
                 Field::field.titleString = FieldData::title_containment_breach;
             }
@@ -282,7 +283,7 @@ void WorldModel::SpawnMimicToGrid()
     size_t cladeRoll = Random::RandomInt(MimicData::CLADE_MOOK, maxSpawnableClade);
 
     /*debug*/
-    cladeRoll = MimicData::CLADE_REDIRECTOR;
+    //cladeRoll = MimicData::CLADE_REDIRECTOR;
     /*end debug*/
 
     spawnMimic->Initialize(cladeRoll);

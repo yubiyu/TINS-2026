@@ -15,6 +15,32 @@ struct FieldData
     static const int DIALOG_HEIGHT = 320;
                                                                 
     static const inline std::string title_mimic_suppression_array = "mimic_suppression_array";
+
+    static const inline std::array<std::string, 13> statusTechnobabbleA =
+    {
+        "core : ",
+        "power_grid : ",
+        "generator : ",
+        "heat_sink : ",
+        "sensors : ",
+        "cpu : ",
+        "comms : ",
+        "memory : ",
+        "biosphere : ",
+        "propulsion : ",
+        "shields : ",
+        "armour : ",
+        "hull : ",
+    };
+
+    static const inline std::array<std::string, 4> statusTechnobabbleB = 
+    {
+        "OK",
+        "NORMAL",
+        "ERROR",
+        "NULL"
+    };
+
     static const inline std::string title_failure_imminent = "array_failure_imminent!";
     static const inline std::string title_containment_breach = "CONTAINMENT_BREACHED";
     static const inline std::array<std::string, 18> randomTitles =
