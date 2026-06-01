@@ -22,7 +22,7 @@ void Radiation::Initialize(float set_x, float set_y, bool set_shrapenel)
         lifespan = Random::RandomInt(Timer::FPS * 1, Timer::FPS * 1);
         radius = 10.0;
 
-        initSpeed = Random::RandomReal(10.0, 20.0);
+        initSpeed = Random::RandomReal(5.0, 40.0);
 
         spinAngle = initAngle;
         float maxSpinChange = ((ALLEGRO_PI*2)/Timer::FPS) * 2.0;

@@ -2,6 +2,7 @@
 
 #include "core_uistate.h"
 #include "core_random.h"
+#include "core_display.h"
 
 #include "ui_worldview.h"
 
@@ -38,18 +39,34 @@ void WorldModel::Uninitialize()
     for (auto *l : stunLightnings)
         delete l;
     stunLightnings.clear();
+
+    for (auto *m : looseMimics)
+        delete m;
+    looseMimics.clear();
 }
 
 void WorldModel::Reset()
 {
-    WorldModel::Uninitialize();
+    gameFailed = false;
+    gameProgress = 0;
+    usingMaxSpawnableClade = true;
 
+    /*
+    Debug begin.
+    */
+    //gameFailed = true; // Comment out.
+    //usingMaxSpawnableClade = false; // Comment out.
+    /*
+    Debug end.
+    */
+
+
+    WorldModel::Uninitialize();
     Field::field.Initialize();
 
-    gameProgress = 0;
-    // usingMaxSpawnableClade = true;
-
     for (auto &i : mimicsCaptured)
+        i = 0;
+    for (auto &i : chaosScore)
         i = 0;
 
     SetDefaultRedirectionArray();
@@ -59,11 +76,20 @@ void WorldModel::Update()
 {
     Field::field.Update();
     Field::field.ProgressSpawnCD();
+
+    if(gameFailed)
+        Field::field.currentSpawnCD -= 2; // More chaos!
+
     if (Field::field.currentSpawnCD <= 0)
     {
         int mimicsToSpawn = Field::field.SimultaneousSpawnRNG();
         for (int i = 0; i < mimicsToSpawn; i++)
-            SpawnMimic();
+        {
+            if (!gameFailed)
+                SpawnMimicToGrid();
+            else
+                SpawnMimicBreached();
+        }
         Field::field.ResetSpawnCD();
     }
 
@@ -74,7 +100,7 @@ void WorldModel::Update()
         {
             occupantMimic->Update();
 
-            if (occupantMimic->isCaptured)
+            if (occupantMimic->isCaptured || occupantMimic->isDefused)
             {
                 AddCapture(occupantMimic->clade);
                 delete occupantMimic;
@@ -86,8 +112,7 @@ void WorldModel::Update()
             {
                 delete occupantMimic;
                 mimicGrid[i] = nullptr;
-                Field::field.contamination += Field::field.contaminationPerLeak;
-                Field::field.contaminationDoT += Field::field.contaminationDoTPerLeak;
+                Leak();
                 SpawnExplosionRadiation(occupantMimic->xPosition, occupantMimic->yPosition);
 
                 UpdateRedirectionArray();
@@ -108,6 +133,34 @@ void WorldModel::Update()
             }
         }
     }
+
+    for (const auto &breachMimic : looseMimics)
+    {
+        breachMimic->Update();
+        if (breachMimic->isDefused || breachMimic->isExploding)
+        {
+            Leak();
+            if(breachMimic->isStunner)
+                SpawnStunLightning(breachMimic->xPosition, breachMimic->yPosition);        
+            else
+                SpawnExplosionRadiation(breachMimic->xPosition, breachMimic->yPosition);
+        }
+    }
+    auto loose_it = std::remove_if(
+        looseMimics.begin(),
+        looseMimics.end(),
+        [](Mimic *looseMimic)
+        {
+            if (looseMimic->isDefused || looseMimic->isExploding)
+            {
+                delete looseMimic;
+                return true;
+            }
+            return false;
+        });
+    looseMimics.erase(loose_it, looseMimics.end());
+
+    
 
     for (const auto &phaseImage : phaseImages)
     {
@@ -160,9 +213,24 @@ void WorldModel::Update()
             return false;
         });
     stunLightnings.erase(spark_it, stunLightnings.end());
+
+
+    if(gameFailed)
+    {
+        chaosScoreTicks_current ++;
+        if(chaosScoreTicks_current >= chaosScoreTicks_Max)
+        {
+            chaosScoreTicks_current = 0;
+            for(auto &i : chaosScore)
+            {
+                if(Random::FlipCoin())
+                    i = Random::RandomInt(1000, 9999);
+            }
+        }
+    }
 }
 
-void WorldModel::SpawnMimic()
+void WorldModel::SpawnMimicToGrid()
 {
     std::vector<int> gridEmptyCells{};
 
@@ -187,6 +255,10 @@ void WorldModel::SpawnMimic()
             maxSpawnableClade--; // Repeatedly adjust downward to a suitable level.
     size_t cladeRoll = Random::RandomInt(MimicData::CLADE_MOOK, maxSpawnableClade);
 
+    /*debug*/
+    // cladeRoll = MimicData::CLADE_STUNNER;
+    /*end debug*/
+
     spawnMimic->Initialize(cladeRoll);
     if (spawnMimic->isRedirector)
     {
@@ -203,9 +275,7 @@ void WorldModel::SpawnMimic()
             UpdateRedirectionArray();
         }
         else
-        {
-            spawnMimic->Initialize(MimicData::CLADE_MOOK);
-        }
+            spawnMimic->Initialize(MimicData::CLADE_MOOK); // No room to spawn the new guy.
     }
 
     spawnMimic->xPosition = Field::field.gridXPosition +
@@ -229,6 +299,38 @@ void WorldModel::SpawnMimic()
     phaseImages.push_back(leftPhase);
     phaseImages.push_back(rightPhase);
 }
+void WorldModel::SpawnMimicBreached()
+{
+    Mimic *breachMimic = new Mimic();
+    int maxSpawnableClade = MimicData::CLADE_VARIABLE;
+    if (usingMaxSpawnableClade)
+        while (gameProgress < MimicData::progressToEncounterClade[maxSpawnableClade])
+            maxSpawnableClade--; // Repeatedly adjust downward to a suitable level.
+    size_t cladeRoll = Random::RandomInt(MimicData::CLADE_MOOK, maxSpawnableClade);
+    breachMimic->Initialize(cladeRoll);
+
+    if (breachMimic->isRedirector)
+        breachMimic->SetRedirectionIndex(Random::RandomInt(0, 8));
+
+    breachMimic->xPosition = Random::RandomInt(64, Display::width - 64);
+    breachMimic->yPosition = Random::RandomInt(64, Display::height - 64);
+
+    looseMimics.push_back(breachMimic);
+
+    PhaseImage *leftPhase = new PhaseImage();
+    leftPhase->Initialize(breachMimic->clade,
+                          breachMimic->xPosition - MimicData::PHASING_DISTANCE, breachMimic->yPosition,
+                          breachMimic->xPosition, breachMimic->yPosition);
+
+    PhaseImage *rightPhase = new PhaseImage();
+    rightPhase->Initialize(breachMimic->clade,
+                           breachMimic->xPosition + MimicData::PHASING_DISTANCE, breachMimic->yPosition,
+                           breachMimic->xPosition, breachMimic->yPosition);
+
+    phaseImages.push_back(leftPhase);
+    phaseImages.push_back(rightPhase);
+}
+
 void WorldModel::SpawnMimic_Splitters(int origin_col, int origin_row)
 {
     /*
@@ -369,6 +471,11 @@ void WorldModel::AddCapture(size_t which_clade)
 void WorldModel::Misplay()
 {
     Field::field.contamination += Field::field.contaminationPerMisplay;
+}
+void WorldModel::Leak()
+{
+    Field::field.contamination += Field::field.contaminationPerLeak;
+    Field::field.contaminationDoT += Field::field.contaminationDoTPerLeak;
 }
 
 void WorldModel::UpdateRedirectionArray()

@@ -1,1 +1,7 @@
-fix bomb
+
+
+1) overflow reset
+
+2) bestiary
+
+3) snapshot state / reload

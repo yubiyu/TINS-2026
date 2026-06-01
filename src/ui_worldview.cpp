@@ -92,6 +92,7 @@ void WorldView::UpdateBuffer()
     DrawPhaseImages();
     DrawMimics();
     DrawCapturers();
+    DrawLooseMimics();
     DrawStunLightnings();
     DrawRadiation();
     DrawDialog();
@@ -161,6 +162,10 @@ void WorldView::DrawCounters()
             int textDrawY = spriteDrawY + Text::FIELD_COUNTER_FONT_HEIGHT / 2;
             std::string captureCountString = std::to_string(WorldModel::world.mimicsCaptured[mimicIndex]);
 
+            if(WorldModel::world.gameFailed)
+                captureCountString = std::to_string(WorldModel::world.chaosScore[mimicIndex]);
+
+
             if (WorldModel::world.mimicsCaptured[mimicIndex] >= 1)
             {
                 al_draw_bitmap(Image::mimicAtlas_mimicsB[mimicIndex], spriteDrawX, spriteDrawY, 0);
@@ -169,6 +174,7 @@ void WorldView::DrawCounters()
             else
                 al_draw_bitmap(Image::mimicAtlas_unknownMimics[mimicIndex], spriteDrawX, spriteDrawY, 0);
 
+    
             TextUtil::al_draw_string(Text::fieldCounterFont, Palette::textDefault,
                                      textDrawX, textDrawY,
                                      ALLEGRO_ALIGN_LEFT, captureCountString);
@@ -262,6 +268,40 @@ void WorldView::DrawCapturers()
         al_draw_bitmap(Image::captureAtlas[drawCapturerFrame], drawX, drawY, 0);
     }
 }
+void WorldView::DrawLooseMimics()
+{
+    for(const auto & looseMimic : WorldModel::world.looseMimics)
+    {
+        if(looseMimic->inPhasing)
+            continue;
+
+        size_t mimicClade = looseMimic->clade;
+
+        float mimicDrawX = looseMimic->xPosition - MimicData::SPRITE_WIDTH / 2;
+        float mimicDrawY = looseMimic->yPosition - MimicData::SPRITE_HEIGHT / 2;
+        if (looseMimic->inFrameB)
+            al_draw_bitmap(Image::mimicAtlas_mimicsB[mimicClade], mimicDrawX, mimicDrawY, 0);
+        else
+            al_draw_bitmap(Image::mimicAtlas_mimicsA[mimicClade], mimicDrawX, mimicDrawY, 0);
+
+        size_t pupilIndex = looseMimic->pupilSpriteIndex;
+        float pupilDrawX = mimicDrawX + looseMimic->pupilXDisplacement;
+        float pupilDrawY = mimicDrawY + looseMimic->pupilYDisplacement;
+
+        al_draw_bitmap(Image::pupilAtlas[pupilIndex], pupilDrawX, pupilDrawY, 0);
+
+        if (looseMimic->health > 1)
+        {
+            al_draw_scaled_rotated_bitmap(Image::bubblePng,
+                                          MimicData::SPRITE_WIDTH / 2, MimicData::SPRITE_HEIGHT / 2,
+                                          looseMimic->xPosition - 2, looseMimic->yPosition + 2,
+                                          2.0, 2.0,
+                                          looseMimic->shieldRotation, 0);
+        }
+        
+    }
+}
+
 void WorldView::DrawStunLightnings()
 {
     for (size_t i = 0; i < WorldModel::world.stunLightnings.size(); i++)

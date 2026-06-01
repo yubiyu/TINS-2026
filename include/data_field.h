@@ -15,7 +15,7 @@ struct FieldData
 
     static const inline std::string dialog_error = "ERROR";
     static const inline std::string dialog_gravimetric_interference = "Gravimetric interference!";
-    static const inline std::string dialog_recalibrating = "[ Recalibrating ]";
+    static const inline std::string dialog_recalibrating = "Recalibrating...";
 
     
 

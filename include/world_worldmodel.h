@@ -12,6 +12,7 @@ class WorldModel
 {
 public:
 
+    bool gameFailed {};
     int gameProgress {};
     bool usingMaxSpawnableClade {};
 
@@ -25,15 +26,22 @@ public:
     std::vector<StunLightning*>stunLightnings;
 
 
-    static WorldModel world; // Shared world instance.
 
+
+    std::vector<Mimic*> looseMimics {};
+    std::array<int, MimicData::NUM_CLADES> chaosScore {};
+    int chaosScoreTicks_current{};
+    int chaosScoreTicks_Max = 4;
+
+    static WorldModel world; // Shared world instance.
     void Initialize();
     void Uninitialize();
     void Reset();
 
     void Update();
     
-    void SpawnMimic();
+    void SpawnMimicToGrid();
+    void SpawnMimicBreached();
     void SpawnMimic_Splitters(int origin_col, int origin_row);
     void SpawnExplosionRadiation(float origin_x, float origin_y);
     void SpawnStunLightning(float origin_x, float origin_y);
@@ -42,6 +50,7 @@ public:
     void CompleteAttackCell(size_t cell_index);
     void AddCapture(size_t which_clade);
     void Misplay();
+    void Leak();
 
     void UpdateRedirectionArray();
     void SetDefaultRedirectionArray();

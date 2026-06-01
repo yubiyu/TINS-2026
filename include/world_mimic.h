@@ -22,6 +22,7 @@ struct Mimic
     bool isSplitter = false;
 
     bool isStunner = false;
+    bool isDefused = false;
 
     float xPosition {}; // Centered coords.
     float yPosition {};

@@ -74,7 +74,12 @@ void Mimic::Update()
 {
     detonationCD--;
     if (detonationCD <= 0 && !isCaptured)
-        isExploding = true;
+    {
+        if(clade == MimicData::CLADE_STUNNER)
+            isDefused = true;
+        else
+            isExploding = true;
+    }
 
     if (inPhasing)
     {
